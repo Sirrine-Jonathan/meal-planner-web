@@ -1,0 +1,635 @@
+.hidden {
+	display: none;
+}
+
+html, body {
+	margin:0;
+	padding:0;
+	font-family: 'Raleway', sans-serif;
+	background-image: URL("./pics/swirl_pattern.png");
+	background-repeat:repeat;
+}
+
+/*THREE LARGE SECTIONS STYLES*/
+
+#header {
+	text-align:center;
+	background-color:black;
+	background-image: URL("./pics/burried.png");
+	padding:35px 0;
+	background-repeat:repeat;
+	font-family: 'Shadows Into Light', cursive;	
+}
+
+#welcomeBox {
+    border: 3px ridge #B5CDE1;
+    padding: 20px;
+    background-color: rgba(235,235,235,1);
+}
+
+#startPage {
+	border: 3px groove;
+	padding:15px;
+	margin:55px auto;
+	width: 75%;
+	box-shadow: 2px 2px 5px 1px grey;
+    background-color:white;
+}
+
+#logoutBtn {
+	vertical-align:text-bottom;
+}
+
+#addRecipeContainer {
+   display: none;
+   background-color:black;
+}
+
+#chooseRecipeContainer {
+   display: none;
+}
+
+#myPantry {
+   display: none;
+}
+
+#shoppingListContainer {
+   display: none;
+}
+
+/*HEADER CHILDREN*/
+
+#appTitle {
+	font-size:7em;
+	color:white;
+	margin:0;
+}
+
+.showButton {
+	position:relative;
+	top:0;
+	left:0;
+	width:15%;
+	border: 1px solid #ffffff;
+	padding:15px;
+	font-size:1.5em;
+	margin:0 15px;
+	box-shadow: 4px 4px 1px 0 white;
+	background-color:black;
+	color:white;
+	cursor:pointer;
+	vertical-align:top;
+}
+
+#showHome {
+	width:100px;
+	padding:4px;
+}
+
+#homeIcon {
+	width:45px;
+	height:45px;
+}
+
+/*ingredients Bank*/
+
+#ingredientBank, #communityIngredientBank {
+	border:3px groove;
+	min-height:300px;
+	max-height:500px;
+	overflow-y:scroll;
+	overflow-x:hidden;
+}
+
+.oneIngredient, .oneCommunityIngredient {
+	background-color:white;
+	border:1px solid black;
+	padding:5px;
+	margin:3px;
+}
+
+.oneIngredient:hover, .oneCommunityIngredient:hover {
+	background-color:lightgrey;
+}
+
+
+/*addRecipeContainer Children*/
+/*FORM STYLES*/
+#newRecipeForm, #newCommunityRecipeForm {
+    display: inline-block;
+    box-sizing: border-box;
+    width: 48%;
+    padding: 2%;
+    text-align: center;
+}
+
+#recipeName, #communityRecipeName {
+	margin:10px;
+	font-size:2em;
+}
+
+#ingredients, #communityIngredients {
+	box-sizing:border-box;
+	border:3px groove;
+	height:250px;
+	width:100%;
+	margin:5px auto;
+	overflow: auto;
+}
+
+.removeIngFromRecipe {
+	float:right;
+	font-size:0.8em !important;
+	background-color:crimson !important;
+    font-weight:bold;
+	margin:0 !important;
+}
+
+.addIngToRecipe {
+	float:left;
+	font-size:0.8em !important;
+    font-weight:bold;
+	margin:0 !important;
+}
+
+#clearIngredientsInRecipe, #clearCommunityIngredientsInRecipe {
+	background-color:crimson !important;
+}
+
+.amountInput {
+	float:left;
+}
+
+#newDirections, #newCommunityDirections {
+   display:block;
+   width:100%;
+   height:150px;
+   margin:5px auto;
+   text-align:left;
+   font-size:1.2em;
+   resize:vertical;
+}
+
+#newRecipeForm > label {
+	float:left;
+}
+
+/*INGREDIENTS CHOOSER*/
+#chooseIngredients, #chooseCommunityIngredients {
+    display: inline-block;
+    box-sizing: border-box;
+    width: 50%;
+    padding: 2%;
+    float: right;
+    text-align: center;
+}
+
+.recipeListHeader {
+    display: inline-block;
+    width: 50%;
+    text-align: center;
+}
+
+#recipeList {
+   display:inline-block;
+   box-sizing:border-box;
+   width:50%;
+   height:100vh;
+   padding:1%;
+   text-align:center;
+}
+
+#recipes {
+	max-height:90vh;
+	overflow-y:scroll;
+	overflow-x:hidden;
+}
+
+#shoppingListRow {
+	display:flex;
+}
+
+#shoppingListInfo, #shoppingListSettings {
+	flex: 1;
+	text-align:left;
+    box-sizing: border-box;
+    border: 3px groove #ddd;
+    background-color: white;
+    background-color: rgba(255,255,255,0.6);
+	padding:1%;
+}
+
+.ingBlock {
+	display: flex;
+	justify-content: space-around;
+	align-items: flex-start;
+	align-content: space-around;
+	width:100%;
+}
+
+.dataWarning {
+    display: block;
+    text-align: center;
+    color: red;
+    font-style: italic;
+    width: 64%;
+    margin: 0 auto;
+}
+
+.radioGroup {
+	margin-left: 20px;
+}
+
+#autogenPantryItemPreferences {
+	margin-left: 24px;
+}
+
+.preferencesSelect {
+	font-size:1em !important;
+}
+
+.greyedOut {
+	color: #BBBBBB;
+}
+
+#shoppingList {
+   box-sizing:border-box;
+   width:80%;
+   margin:0 auto;
+   height:150vh;
+   text-align:center;
+}
+
+#savedShoppingLists {
+	border:3px groove;
+	background-color:white;
+	background-color:rgba(255,255,255,0.6);
+	text-align:left;
+	padding:2%;
+	margin:0 auto;
+}
+
+#shoppingListTarget {
+	box-sizing:border-box;
+	border:3px groove #ddd;
+	background-color:white;
+	background-color:rgba(255,255,255,0.6);
+	text-align:left;
+	width:100%;
+	min-height:150px;
+	max-height:850px;
+	margin:0 auto;
+	overflow-y:scroll;
+	overflow-x:hidden;
+	font-size:1.3em;
+}
+
+#scheduledRecipesDiv {
+    width: 48%;
+    display: inline-block;
+    float: right;	
+	padding:1%;
+}
+
+#scheduledRecipesDisplay {
+	box-sizing:border-box;
+	border:3px groove #ddd;
+	background-color:white;
+	background-color:rgba(255,255,255,0.6);
+	font-size:1.2em;
+	min-height:500px;
+	max-height:841px;
+	overflow-y:scroll;
+	overflow-x:hidden;
+}
+
+.scheduledRecipeDisplay {
+	background-color: #eee;
+}
+
+.plannerDiv {
+	margin:10px; 
+}
+
+.ingDiv {
+	border:1px solid #aaa;
+	border-radius:5px;
+	background-color:#EEEEEE;
+	margin:5px;
+}
+
+.ingDiv > * {
+	padding: 10px;
+}
+
+.listItemDelete, .stagedItemRemove {
+	background-color: crimson;
+    font-weight:bold;
+	margin:0 !important;
+}
+
+.listItemDelete:hover, .stagedItemRemove:hover {
+	background-color: #8c0d26;
+	cursor: pointer;
+}
+
+.ingBlockProcess {
+	background-color: #4C8DC8;
+    font-weight:bold;
+	margin:0 !important;
+}
+
+.ingBlockProcess:hover {
+	background-color: #386A98;
+	cursor: pointer;
+}
+
+.subtractBtn, .dismissBtn {
+	font-size:1em !important;
+	padding:5px !important;
+}
+
+.shoppingListButton {
+    box-sizing: border-box;
+    height: 150vh;
+    text-align: center;
+	margin:20px;
+}
+
+/*RECIPE STYLES*/
+
+.oneRecipe {
+    border: 3px groove;
+    background-color: white;
+    background-color: rgba(255,255,255,0.6);
+    text-align: left;
+    padding-left: 20px;
+    margin: 10px;
+}
+
+.oneRecipe * {
+	padding:2px;
+}
+
+.oneRecipeName {
+	text-align:center;
+}
+
+.oneRecipeDirections {
+	
+}
+
+.submitter {
+	
+}
+
+.creationDate {
+
+}
+
+.communitySubmitter {
+	margin-left: 20px;
+}
+
+.communityCategories {
+	margin-left: 20px;
+}
+
+.communityCreationDate {
+	margin-right: 20px;
+	float: right;
+}
+
+.oneRecipeIng {
+	text-align:left;
+	margin:0 auto;
+}
+
+#communityRecipes {
+	max-height:1020px;
+	overflow-y:scroll;
+	overflow-x:hidden;
+}
+
+.oneCommunityRecipeDirections {
+	width:95%;
+	text-align:left;
+	margin:20px auto;
+}
+
+.oneCommunityRecipe {
+	border:3px groove;
+	background-color:white;
+	background-color:rgba(255,255,255,0.6);
+	text-align:left;
+	margin:5px;
+}
+
+.oneCommunityRecipeName {
+	margin: 0 20px;
+}
+
+.oneCommunityRecipeIng {
+	text-align:left;
+}
+
+/*
+	Pantry Styles
+*/
+
+#myPantry {
+	background-color:#DDDDDD;
+	background-image: url("./pics/swirl_pattern.png");
+	background-repeat: repeat;
+    height:150vh;
+}
+
+.pantryItem {
+	padding: 1%;
+	background-color: #eeeeee;
+	border-radius:5px;
+	width:80%;
+	font-size: 1.5em;
+	margin:0 auto;
+}  
+
+.pantryItemHeaderDiv {
+	display:flex;
+	justify-content:space-between;
+	align-items: baseline;
+}
+
+.pantryItemHeaderDiv * {
+	display:inline-block;
+}
+
+.pantryItemBodyDiv {
+	display:none;
+	margin-top:50px;
+}
+
+.pantryItemShowDetailsBtn {
+	font-size:1em;
+	margin:0;
+}
+
+.amtLabel {
+	width: 150px;
+	font-size:2vw;
+}
+
+.pantryItemAmountIn {
+    width: 100px;
+	text-align:left;
+	font-size:1.3em;
+}
+
+.pantryItemInfoDiv {
+	display: block;
+}
+
+.pantryItemInfoDiv input, .pantryItemInfoDiv select {
+	box-sizing:border-box;
+	height:20px;
+}
+
+.pantryItemInfoDiv div {
+	line-height:26px;
+}
+
+.pantryItemPropDisplay {
+	display: block;
+}
+
+.pantryFnDiv {
+	display: inline-block;
+	font-size:1em;
+}
+
+#pantryModal {
+	display:none; 
+	position: fixed;
+	z-index: 1;
+	left: 0;
+	top: 0;
+	height:100%;
+	width:100%;
+	overflow: auto;
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */	
+}
+
+#newCommunityModalInnerDiv, #newRecipeModalInnerDiv {
+    background-color: #fefefe;
+    margin: 5% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 90%;
+    height: 950px;
+    background-color: #DDDDDD;
+    background-image: url(./pics/symphony.png);
+    background-repeat: repeat;
+}
+
+#newCommunityModal, #newRecipeModal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgb(0,0,0);
+    background-color: rgba(0,0,0,0.4);
+}
+
+#newPantryItemForm {
+	background-color:#fefefe;
+	margin:5% auto;
+	padding:20px;
+	border: 1px solid #888;
+	width:50%;
+}
+
+#pantryPageHeader {
+	background-color:white;
+	background-color:rgba(255,255,255,0.5);
+}
+
+#pantryControls {
+	width:60%;
+	float:right;
+	vertical-align:top;
+	text-align:right;
+	margin-right:5%;
+}
+
+#pantryTotals {
+	font-size:1.2em;
+	padding:1%;
+	width:30%;
+	text-align:center;
+	margin-bottom:3%;
+}
+
+#pantryTotals label {
+	
+}
+
+#pantryTotals span {
+	
+}
+
+#pantryTotals div div {
+	display:inline-block;
+	width:48%;
+}
+
+.closeModal {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.closeModal:hover,
+.closeModal:active,
+.closeModal:focus {
+    color: crimson;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+#newPantryItemForm label {
+	font-size:1.5em;	
+}
+
+#newPantryItemForm div {
+	margin:3% auto;
+}
+
+
+/*
+
+	CLEVER GLOBAL STYLES
+
+*/
+
+.sortBySpan {
+	font-size:1.2em;
+	padding:3px;
+}
+
+input[type="Button"] {
+	font-size:1.3em;
+	border-radius:5px;
+	background-color:#B5CDE1;
+	margin:10px;
+	cursor:pointer;
+}
+
+input[type="text"], select {
+	font-size:1.3em;
+}

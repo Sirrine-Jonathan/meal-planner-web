@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html>
+  <head>
+	<title>Meal Planner</title>
+
+	<script src="https://www.gstatic.com/firebasejs/4.7.0/firebase.js"></script>
+	<script src="https://www.gstatic.com/firebasejs/3.7.1/firebase-app.js"></script>
+	<script src="https://www.gstatic.com/firebasejs/3.7.1/firebase-auth.js"></script>
+	<script src="https://www.gstatic.com/firebasejs/3.7.1/firebase-database.js"></script>
+	
+	<!--AUTH SCRIPT LINKs -->
+	<script src="https://www.gstatic.com/firebasejs/4.8.1/firebase.js"></script>
+	<script src="https://cdn.firebase.com/libs/firebaseui/2.5.1/firebaseui.js"></script>
+	<link rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/2.5.1/firebaseui.css" />
+
+	    <!-- update the version number as needed -->
+    <script defer src="/__/firebase/4.7.0/firebase-app.js"></script>
+    <script defer src="/__/firebase/4.7.0/firebase-auth.js"></script>
+    <script defer src="/__/firebase/4.7.0/firebase-database.js"></script>
+
+    <!-- initialize the SDK after all desired features are loaded -->
+    <script defer src="/__/firebase/init.js"></script>
+	
+	<!--LOCALIZED WIDGET
+	<script src="https://www.gstatic.com/firebasejs/ui/2.5.1/firebase-ui-auth__en.js"></script>
+	<link type="text/css" rel="stylesheet" href="https://www.gstatic.com/firebasejs/ui/2.5.1/firebase-ui-auth.css" />
+	-->
+
+	<script>
+	  // Initialize Firebase
+		var config = {
+			apiKey: "AIzaSyDAWZu7_18A8Qi4J9bEskl5K-A9hh0JzmQ",
+			authDomain: "meal-planner-8738e.firebaseapp.com",
+			databaseURL: "https://meal-planner-8738e.firebaseio.com",
+			projectId: "meal-planner-8738e",
+			storageBucket: "meal-planner-8738e.appspot.com",
+			messagingSenderId: "611111003951",
+			clientId: "611111003951-68po95dbaqeqk8a1k0qm6ea05k9nkba9.apps.googleusercontent.com",
+			scopes: [
+				"email",
+				"profile",
+				"https://www.googleapis.com/auth/calendar"
+			],
+			discoveryDocs: [
+				"https://www.googleapis.com/discover/v1/apis/calendar/v3/rest"
+			]
+		};
+		firebase.initializeApp(config);
+		database = firebase.database();
+
+    	var uiConfig = {
+      		signInSuccessUrl: 'http://localhost:5000/',
+   
+	        signInOptions: [
+				{
+					provider: firebase.auth.GoogleAuthProvider.PROVIDER_ID,
+					scopes: config.scopes,
+					authMethod: 'https://accounts.google.com',
+					clientId: '611111003951-68po95dbaqeqk8a1k0qm6ea05k9nkba9.apps.googleusercontent.com'
+				},
+				{
+					provider: firebase.auth.EmailAuthProvider.PROVIDER_ID,
+					requireDisplayName: true
+				}
+	        ],
+	        //credentialHelper: firebaseui.auth.CredentialHelper.NONE,
+	        tosUrl: 'http://sirrineprogramming.com/privacypolicies/morseCoder.htm'
+      	}
+
+		// Initialize the FirebaseUI Widget using Firebase.
+		var ui = new firebaseui.auth.AuthUI(firebase.auth());
+		ui.disableAutoSignIn();
+		ui.start('#firebaseui-auth-container', uiConfig);
+		window.signInWithRedirect = firebase.auth().signInWithRedirect;
+		
+    </script>
+	
+
+	
+	<!--VIEW PORT & CHAR SET-->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+	
+	<!--META TAGS-->
+	<meta name="twitter:card" content="A place to plan your meals" />
+	<meta name="twitter:site" content="@Enirrisky" />
+	<meta name="twitter:creator" content="@Enirrisky" />
+	<meta name="description" content="Meal Planner helps you digitally store your recipes, pantry items, 
+			meal plans, and shopping lists. The tools here help you write 
+			accurate shopping lists and understand the price and nutruition 
+			info of your meal plans. ">
+	<meta property="og:description" content="Meal Planner helps you digitally store your recipes, pantry items, 
+			meal plans, and shopping lists. The tools here help you write 
+			accurate shopping lists and understand the price and nutruition 
+			info of your meal plans.">
+	<meta property="og:title" content="Meal Planner" />
+	<meta property="og:type" content="website" />
+	<meta property="og:url" content="meal-planner-8738e.firebaseapp.com" />
+	
+	<!--PROJECT STYLES & FONTS-->
+	<link rel="stylesheet" type="text/css" href="mealPlanner.css" >
+	<link href="https://fonts.googleapis.com/css?family=Shadows+Into+Light" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
+</head>
+<body>
+<!--Show and hide different interfaces-->
+<div id="header">
+	<h1 id="appTitle">Meal Planner</h1>
+	<div id="nav" class="hidden">
+		<button class="showButton" id="showHome"      ><img id="homeIcon" src="pics/home.png"/></button>
+		<button class="showButton" id="showPlanner"   >Recipes</button>
+		<button class="showButton" id="showShopping"  >Shopping List</button>
+		<button class="showButton" id="showPantry"    >Pantry</button>
+	</div>
+</div>
+
+<!-- Home
+ -
+ -
+ -
+ -
+ -->
+<div id="startPage">
+	
+	<!-- Introduction Page -->
+	<div id="introduction">
+		<h1 style="text-align:center">WELCOME TO MEAL PLANNER</h1>
+		<div style="width: 80%; margin:0 auto;">
+			<p style="font-size:1.3em">
+				Meal Planner helps you digitally store your recipes, pantry items, 
+				meal plans, and shopping lists. The tools here help you write 
+				accurate shopping lists and understand the price and nutruition 
+				info of your meal plans. 
+			</p>
+
+			<!--Log in Operations--> 
+			<div id="firebaseui-auth-container"></div>
+		</div>
+	</div>
+	
+	<!-- Home Page -->
+	<div id="home">
+		<div id="welcomeBox">
+			<div style="display:flex; justify-content: space-evenly">
+				<h1 id="welcome"></h1>
+				<input style="display:inline-block;" type="button" id="logoutBtn" value="Logout" />
+			</div>
+			<div style="width: 80%; margin:0 auto;">
+				<p style="font-size:1.3em">
+					Check out some of the community recipes below. You can add community recipes to your
+					personal stash in the "Plan Meals" tab as well as contribute to the community list by 
+					submitting recipes on the "Add Recipe" tab. 
+				</p>
+				<p style="font-size:1.3em">
+					Once you've added a community recipe to your list, you can include in it your schedule
+					and its ingredients will be added to your shopping list while taking into account any 
+					relevant items you may have in your pantry. 
+				</p>
+					
+			</div>
+		</div>
+		
+		<!--TODO Provide Functionality for search and sort-->
+		<h1 style="text-align:center">Community Recipes</h1>
+		<div style="text-align:center">
+		
+			<!--SEARCH FUNCTION-->
+			<input id="searchCommunityRecipes" type="text" placeholder="Search" />
+
+			<!--CATEGORY SELECT FUNCTION-->
+			<select id="communityCategorySelect">
+				<option value="All">All</option>
+				<option value="Breakfast">Breakfast</option>
+				<option value="Lunch">Lunch</option>
+				<option value="Dinner">Dinner</option>
+				<option value="Dairy Free">Dairy Free</option>
+				<option value="Ketogenic">Ketogenic</option>
+				<option value="Vegetarian">Vegetarian</option>
+				<option value="Vegan">Vegan</option> 	
+				<option value="Low Sugar">Low Sugar</option>
+				<option value="Low Calorie">Low Calorie</option>
+				<option value="Paleolithic">Paleolithic</option>
+			</select>			
+
+			<!--SORT FUNCTION-->
+			<span class="sortBySpan">Sort By</span>
+			<select id="communityRecipeSort">
+				<!--ADD SORTING-->
+				<option value="az" selected>A-Z</option>
+				<option value="za">Z-A</option>
+				<option value="submitter">Submitter</option>
+				<option value="creationDate">Date</option>
+			</select>
+			
+			<!--ADD NEW FUNCTION-->
+			<input type="button" id="openNewCommunityModal" value="Add Recipe" />
+			
+		</div>
+		
+		<div id="communityRecipes">
+		</div>
+
+		<!--add new community recipe modal-->
+		<div id="newCommunityModal">
+			<div id="newCommunityModalInnerDiv">
+				<span tabindex="0" class="closeModal" id="closeCommunityModal">&times;</span>
+				
+				<form id="newCommunityRecipeForm">
+					<input id="communityRecipeName" type="text" placeholder="Recipe Name" style="width:60%"></input><br />
+					<select id="communityCategory" multiple size="4" style="font-size:1em; width:60%">
+						<option disabled>Categories</option>
+						<option value="Breakfast">Breakfast</option>
+						<option value="Lunch">Lunch</option>
+						<option value="Dinner">Dinner</option>
+						<option value="Dairy Free">Dairy Free</option>
+						<option value="Ketogenic">Ketogenic</option>
+						<option value="Vegetarian">Vegetarian</option>
+						<option value="Vegan">Vegan</option> 	
+						<option value="Low Sugar">Low Sugar</option>
+						<option value="Low Calorie">Low Calorie</option>
+						<option value="Paleolithic">Paleolithic</option>
+					</select><br />
+					<span><em>use ctrl to select multiple categories</em></span><br /><br />
+					<label style="font-weight:bold">Ingredients</label><br />
+					
+					<!-- Ingredients from "Ingredients List" are dropped or added here by click-->
+					<div id="communityIngredients" ondrop="ondrop_HandlerCommunity(event)" ondragover="ondragover_HandlerCommunity(event)">
+						Get ingredients for your recipe from the ingredients bank
+					</div>
+					
+					
+					<input type="button" id="clearCommunityIngredientsInRecipe" value="Clear" /><br /><br />
+					<label style="font-weight:bold">Directions</label><br />
+					<textarea id="newCommunityDirections" placeholder="Explain how to prepare this recipe"></textarea><br />
+					<label style="font-weight:bold">Serves </label><input id="servesCommunityRecipe" type="number" min="1" />
+					<input type="button" id="submitNewCommunityRecipe" value="Submit to Community" /><br />
+					<span class="submitMsg" id="communityRecipeMsg"></span>
+				</form>
+				
+				<div id="chooseCommunityIngredients">
+					<h2>Ingredients Bank</h2>
+					<h4>Add ingredients to your recipe by clicking and dragging<br />
+					or by selecting the plus symbol on the ingredient<br />
+					(the red 'x' removes the ingredient from its container)</h4>
+					<div style="padding:5px;">
+						<input type="text" id="searchCommunityIngInput" placeholder="Search" />
+						<span class="sortBySpan">Sort By</span>
+						<select id="communityIngredientSort">
+							<!--ADD SORTING-->
+							<option value="az" selected>A-Z</option>
+							<option value="za" >Z-A</option> 
+						</select>
+					</div>
+					
+					<!-- HERE GO ALL OF THE INGREDIENTS FROM INGREDIENT LIST -->
+					<div id="communityIngredientBank"></div>
+					
+					<!-- NEW INGREDIENT FORM -->
+					<input id="newCommunityIngredient" type="text" placeholder="new ingredient"/>
+					<select id="communityUnit" class="unitsSelect">
+					</select>
+					<input type="button" id="submitNewCommunityIngredient" value="Submit" /><br />
+					<span class="submitMsg" id="communityIngredientMsg"></span>
+					
+				</div>
+				
+			</div><!--END INNER DIV-->	
+		</div><!--END MODAL-->
+	</div>
+</div>
+
+
+<!-- Recipes
+ -
+ -
+ -
+ -
+ -->
+<div id="chooseRecipeContainer">
+	<div class="pageHeader">
+		<div class="recipeListHeader" style="float:right">
+			<h1>Scheduled Recipes</h1>
+			<h3>The ingredients for each scheduled recipe will be included in your shopping list</h3>
+		</div>
+		<div class="recipeListHeader">
+			<h1>Recipes</h1>
+			
+			<!--SEARCH FUNCTION-->
+			<input type="text" id="searchRecipesInput" placeholder="Recipe Name" /><br />
+			
+			<!--CATEGORY SELECT FUNCTION-->
+			<select id="categorySelect">
+				<option value="All">All</option>
+				<option value="Breakfast">Breakfast</option>
+				<option value="Lunch">Lunch</option>
+				<option value="Dinner">Dinner</option>
+				<option value="Dairy Free">Dairy Free</option>
+				<option value="Ketogenic">Ketogenic</option>
+				<option value="Vegetarian">Vegetarian</option>
+				<option value="Vegan">Vegan</option> 	
+				<option value="Low Sugar">Low Sugar</option>
+				<option value="Low Calorie">Low Calorie</option>
+				<option value="Paleolithic">Paleolithic</option>
+				<option value="Vegan">Vegan</option>
+				<option value="Vegetarian">Vegetarian</option>  
+			</select>
+			
+			<!--SORT FUNCTION-->
+			<span class="sortBySpan">Sort By</span>
+			<select id="recipeSort">
+				<!--ADD SORTING-->
+				<option value="az" selected>A-Z</option>
+				<option value="za">Z-A</option>
+				<option value="submitter">Submitter</option>
+				<option value="creationDate">Date</option>
+			</select>
+			
+			<!--OPEN ADD NEW RECIPE MODAL-->
+			<input type="button" id="openNewRecipeModal" value="Add Recipe" />
+			
+		</div>		
+	</div>
+
+	<div id="recipeList">
+		<div id="recipes">
+		</div>
+	</div>
+	
+	<!-- SCHEDULED RECIPES DISPLAY -->
+	<div id="scheduledRecipesDiv">
+		
+		<div class="plannerDiv">
+			<div id="scheduledRecipesDisplay">
+			</div>
+		</div>
+	</div>
+	
+	<!--add new recipe modal-->
+	<div id="newRecipeModal">
+		<div id="newRecipeModalInnerDiv">
+			<span tabindex="0" class="closeModal" id="closeRecipeModal">&times;</span>
+			
+			<form id="newRecipeForm">
+				<input id="recipeName" type="text" placeholder="Recipe Name" style="width:60%"></input><br />
+				<select id="category" multiple size="4" style="font-size:1em; width:60%">
+					<option disabled>Categories</option>
+					<option value="Breakfast">Breakfast</option>
+					<option value="Lunch">Lunch</option>
+					<option value="Dinner">Dinner</option>
+					<option value="Dairy Free">Dairy Free</option>
+					<option value="Ketogenic">Ketogenic</option>
+					<option value="Vegetarian">Vegetarian</option>
+					<option value="Vegan">Vegan</option> 	
+					<option value="Low Sugar">Low Sugar</option>
+					<option value="Low Calorie">Low Calorie</option>
+					<option value="Paleolithic">Paleolithic</option>
+					<option value="Vegan">Vegan</option>
+					<option value="Vegetarian">Vegetarian</option> 
+				</select><br />
+				<span><em>use ctrl to select multiple categories</em></span><br /><br />
+				<label style="font-weight:bold">Ingredients</label><br />
+				
+				<!-- Ingredients from "Ingredients List" are dropped or added here by click-->
+				<div id="ingredients" ondrop="ondrop_Handler(event)" ondragover="ondragover_Handler(event)">
+					Get ingredients for your recipe from the ingredients bank
+				</div>
+				
+				<input type="button" id="clearIngredientsInRecipe" value="Clear" /><br /><br />
+				<label style="font-weight:bold">Directions</label><br />
+				<textarea id="newDirections" placeholder="Explain how to prepare this recipe"></textarea><br />
+				<label style="font-weight:bold">Serves </label><input id="servesNewRecipe" type="number" min="1" />
+				<input type="button" id="submitNewRecipe" value="Submit to Recipes" style="display:none"/><br />
+				<input type="button" id="updateNewRecipe" value="Upate Recipe" style="display:none"/><br />
+				<span class="submitMsg" id="recipeMsg"></span>
+			</form>
+			
+			<div id="chooseIngredients">
+				<h2>Ingredients Bank</h2>
+				<h4>Add ingredients to your recipe by clicking and dragging<br />
+				or by selecting the plus symbol on the ingredient<br />
+				(the red 'x' removes the ingredient from its container)</h4>
+				<div style="padding:5px;">
+					<input type="text" id="searchIngInput" placeholder="Search" />
+					<span class="sortBySpan">Sort By</span>
+					<select id="ingredientSort">
+						<!--ADD SORTING-->
+						<option value="az" selected>A-Z</option>
+						<option value="za" >Z-A</option> 
+					</select>
+				</div>
+				
+				<!-- HERE GO ALL OF THE INGREDIENTS FROM INGREDIENT LIST -->
+				<div id="ingredientBank"></div>
+				
+				<!-- NEW INGREDIENT FORM -->
+				<input id="newIngredient" type="text" placeholder="new ingredient"/>
+				<select id="unit" class="unitsSelect">
+				</select>
+				<input type="button" id="submitNewIngredient" value="Submit" /><br />
+				<span class="submitMsg" id="ingredientMsg"></span>
+			</div>
+			
+		</div><!--END INNER DIV-->	
+	</div><!--END MODAL-->
+</div>
+
+<!-- Shopping List
+ -
+ -
+ -
+ -
+ -->
+<div id="shoppingListContainer">
+	<div id="shoppingList">
+		
+		<!-- SAVED SHOPPING LISTS DISPLAY-->
+		<h2 style="text-align:center">Saved Shopping Lists</h2>
+		<div id="savedShoppingLists">	
+		</div>	
+			
+		<!-- SAVE SHOPPING LIST FORM -->
+		<input type="text" id="shoppingListName" placeholder="Current Shopping List"/>
+		<input type="button" id="saveShoppingList" class="shoppingListBtn" value="Save" />
+		<div id="saveShoppingListMsg">
+		</div>
+		
+		
+		<div id="shoppingListRow">
+			<!--SHOPPING LIST TOTALS-->
+			<div id="shoppingListInfo" style="float:right">
+				<h2 style="text-align:center">Shopping List Totals</h2>
+				<div id="shoppingListTotals">
+					<div>
+						<div><label>Sugar: </label><span id="sugarShoppingTotal"></span>g</div>
+						<div><label>Protein: </label><span id="proteinShoppingTotal"></span>g</div>
+					</div>
+					<div>
+						<div><label>Calories: </label><span id="caloriesShoppingTotal"></span></div>
+						<div><label>Carbs: </label><span id="carbsShoppingTotal"></span>g</div>
+					</div>
+					<div>
+						<div><label>Fat: </label><span id="fatShoppingTotal"></span>g</div>
+						<div><label>Total Cost: $</label><span id="storeShoppingTotalPrice"></span><br /></div>
+					</div>
+				</div>
+				<h2 id="listStatus"></h2>
+				<h3 id="listStatusDetails"></h3>
+			</div>
+		
+			<!-- SHOPPING LIST SETTINGS -->
+			<div id="shoppingListSettings" >
+				
+				<h2 style="text-align:center">Settings</h2>
+				<span class="dataWarning">Changing the preferences can cause you to lose unsaved changes to your shopping list</span><br />
+				<div>
+				<input type="checkbox" id="enableStock" name="enableStock" checked />
+				<label>Take your pantry's stock into account</label>
+				
+					<div class="radioGroup">
+					<input type="radio" id="enableStockChoose" name="stockEnable" value="enableStockChoose" />
+					<label for="enableStockChoose" id="enableStockChooseLabel">Choose which pantry items to use where available</label><br />
+				
+					<input type="radio" id="enableStockAuto" name="stockEnable" value="enableStockAuto" checked />
+					<label for="enableStockAuto" id="enableStockAutoLabel">Automatically use all available pantry items</label><br />
+					</div>
+				</div>
+				
+				<div>
+				<input type="checkbox" id="enablePantryItems" name="enablePantryItems" />
+				<label>Include Pantry Items on your Shopping List</label>
+					
+					<div class="radioGroup">
+					<input type="radio" id="enablePantryItemsChoose" name="pantryItemEnable" value="enablePantryItemsChoose" disabled="true"/>
+					<label for="enablePantryItemsChoose" id="enablePantryItemsChooseLabel" class="greyedOut">Choose which pantry items to use</label><br />
+					
+					<input type="radio" id="enablePantryItemsAuto" name="pantryItemEnable" value="enablePantryItemsAuto" checked disabled="true"/>
+					<label for="enablePantryItemsAuto" id="enablePantryItemsAutoLabel" class="greyedOut">Automatically add pantry items based on preferences:</label><br />
+					
+						<!-- AUTOGEN PANTRY ITEM PREFERENCES -->
+						<div id="autogenPantryItemPreferences">
+							<label>Only include items from: </label>
+							<select id="store" class="preferencesSelect">
+								<!--ADD ALL the stores-->
+								<option value="all" selected>All Stores</option>
+							</select>
+							<br />
+							
+							<label>Prefere the </label>
+							<select id="lowOrHigh" class="preferencesSelect">
+								<option value="low" selected>Lowest</option>
+								<option value="High">Highest</option>
+							</select>
+							<select id="property" class="preferencesSelect">
+								<option value="price" selected>Price</option>
+								<option value="size" >Size</option>
+								<option value="sugar" >Sugar</option>
+								<option value="protein" >Protein</option>
+								<option value="calories" >Calories</option>
+								<option value="carbs" >Carbs</option>
+								<option value="fat" >Fat</option>
+							</select>
+						</div>
+						
+					</div>
+				</div>
+				<br />
+					
+				<input type="button" id="regenShoppingList" value="Refresh Shopping List"/>
+				<script>
+					document.querySelector("input[name=enableStock]").addEventListener('click', function(){
+						if (this.checked)
+						{
+							//re enable radios
+							document.getElementById('enableStockChoose').disabled = false;
+							document.getElementById('enableStockAuto').disabled = false;
+							
+							//document.querySelector("input[name=stockEnable]").disabled = false;
+							document.getElementById("enableStockChooseLabel").classList.remove('greyedOut');
+							document.getElementById("enableStockAutoLabel").classList.remove('greyedOut');
+						}
+						else
+						{
+							//disable radios
+							document.getElementById('enableStockChoose').disabled = true;
+							document.getElementById('enableStockAuto').disabled = true;
+							
+							//document.querySelector("input[name=stockEnable]").disabled = true;
+							document.getElementById("enableStockChooseLabel").classList.add('greyedOut');
+							document.getElementById("enableStockAutoLabel").classList.add('greyedOut');
+						}
+					})
+					
+					document.querySelector("input[name=enablePantryItems]").addEventListener('change', function(){
+						if (this.checked)
+						{
+							//re enable radios
+							document.getElementById('enablePantryItemsChoose').disabled = false;
+							document.getElementById('enablePantryItemsAuto').disabled = false;
+							
+							//document.querySelector("input[name=pantryItemEnable]").disabled = false;
+							document.getElementById("enablePantryItemsChooseLabel").classList.remove('greyedOut');
+							document.getElementById("enablePantryItemsAutoLabel").classList.remove('greyedOut');
+						}
+						else
+						{
+						
+							//disable radios
+							document.getElementById('enablePantryItemsChoose').disabled = true;
+							document.getElementById('enablePantryItemsAuto').disabled = true;
+							
+							//document.querySelector("input[name=pantryItemEnable]").disabled = true;
+							document.getElementById("enablePantryItemsChooseLabel").classList.add('greyedOut');
+							document.getElementById("enablePantryItemsAutoLabel").classList.add('greyedOut');
+						}
+						checkAutomaticPantryRadioButton();
+					})
+					
+					document.querySelector("input[id=enablePantryItemsAuto]").addEventListener('change', function(){
+						checkAutomaticPantryRadioButton();
+					})
+					document.querySelector("input[id=enablePantryItemsChoose]").addEventListener('change', function(){
+						checkAutomaticPantryRadioButton();
+					})
+					
+					function checkAutomaticPantryRadioButton(){
+						var btn = document.querySelector("input[id=enablePantryItemsAuto]");
+						var btns = document.querySelector("input[name=pantryItemEnable]");
+						
+						if (btn.checked && !btns.disabled)
+						{
+							var children = document.getElementById('autogenPantryItemPreferences').children;
+							for (ele in children)
+							{
+								if(children[ele].nodeName && children[ele].nodeName.toLowerCase() == "input")
+								{
+									children[ele].disabled = false;
+								}
+								if(children[ele].nodeName && children[ele].nodeName.toLowerCase() == "label")
+								{
+									children[ele].classList.remove("greyedOut");
+								}
+							}
+						}
+						
+						else if(!btn.checked || btns.disabled)
+						{
+							var children = document.getElementById('autogenPantryItemPreferences').children;
+							for (ele in children)
+							{
+								if(children[ele].nodeName && children[ele].nodeName.toLowerCase() == "input")
+								{
+									children[ele].disabled = true;
+								}
+								if(children[ele].nodeName && children[ele].nodeName.toLowerCase() == "label")
+								{
+									children[ele].classList.add("greyedOut");
+								}
+							}
+						}
+					}
+					window.onload = checkAutomaticPantryRadioButton;
+				</script>
+			</div>
+		</div>
+		
+		<!-- SHOPPING LIST DISPLAY -->
+		<div id="shoppingListTarget"></div>
+		<input type="button" id="clearShoppingList" style="background-color:crimson" class="shoppingListBtn" value="Clear Scheduled Recipes & Shopping List" />
+	
+	</div>
+</div>
+
+
+<!-- Pantry
+ -
+ -
+ -
+ -
+ -->
+<div id="myPantry">
+	<div id="pantryPageHeader">
+	
+		<div id="pantryControls"> 
+			<input type="button" id="openNewPantryItemForm" value="New Pantry Item">
+			<!--TODO make predictive search input-->
+			<input type="text" id="searchPantryItemsInput" placeholder="Search"/>
+			<label class="sortBySpan">Sort By</label>
+			<select id="pantryItemSort">
+				<!--ADD ALL MEASUREMENTS-->
+				<option value="az" selected>A-Z</option>
+				<option value="za">Z-A</option>
+			</select>
+		</div>
+		
+		<div id="pantryTotals">
+			<h3 style="margin:0; padding:0;">Pantry Totals</h3>
+			<div>
+				<div><label>Sugar: </label><span id="sugarTotal"></span>g</div>
+				<div><label>Protein: </label><span id="proteinTotal"></span>g</div>
+			</div>
+			<div>
+				<div><label>Calories: </label><span id="caloriesTotal"></span></div>
+				<div><label>Carbs: </label><span id="carbsTotal"></span>g</div>
+			</div>
+			<div>
+				<div><label>Fat: </label><span id="fatTotal"></span>g</div>
+				<div><label>Total Cost: $</label><span id="storeTotalPrice"></span><br /></div>
+			</div>
+		</div>
+	
+	</div>
+	
+	<!--add new pantry item form-->
+	<div id="pantryModal">
+		<form id="newPantryItemForm">
+			<span tabindex="0" class="closeModal" id="closePantryModal">&times;</span>
+		
+			<h1>New Pantry Item</h1>
+			<div>
+				<label>*Product Name: </label>
+				<input type="text" id="pantryItemName" style="width:50%; float:right"/>
+			</div>
+		
+			<div>
+				<label>*Corresponding Ingredient</label>
+				<select id="correspondingIngredient" style="width:50%; float:right;">
+				</select>
+			</div>
+			
+			<!-- TODO allow user to add new ingredient -->
+			<!-- NEW INGREDIENT FORM -->
+			<div style="text-align:center; background-color:rgba(200,200,200,0.7);padding:10px; border-radius:5px;">
+				<h3>Don't see the ingredient you need? Add it here</h3>
+				<input id="newIngredientOnPantryForm" type="text" placeholder="new ingredient"/>
+				<select id="unitOnPantryForm" class="unitsSelect">
+				</select>
+				<input type="button" id="submitNewIngredientOnPantryForm" value="Submit" /><br />
+				<span class="submitMsg" id="ingredientMsgOnPantryForm"></span>
+			</div>
+			
+			<div>
+				<label>*Item Size</label>
+				<input type="number" id="pantryItemAmount" style="font-size:1.5em; width:50%; float:right;"/>
+			</div>
+		
+			<div><!--TODO make predictive search input-->
+				<label>*Item Size Units</label>
+				<select id="pantryItemUnit" class="unitsSelect" style="width:50%; float:right;">
+				</select>
+			</div>
+
+			<div>
+				<label>Serving Size</label>
+				<input type="number" id="servingSize" style="font-size:1.5em; width:50%; float:right;"/>
+			</div>
+			
+			<div><!--TODO make predictive search input-->
+				<label>Serving Size Units</label>
+				<select id="pantryItemServingSizeUnit" class="unitsSelect" style="width:50%; float:right;">
+				</select>
+			</div>
+		
+			<div>
+				<label>Store</label>
+				<input type="text" id="pantryItemStore" style="float:right; width:50%;"/>
+			</div>
+			
+			<div>
+				<label>Price: $</label>
+				<input id="pantryItemPrice" style="font-size:1.5em; float:right; width:50%" type="number" min="0.01" step="0.01" max="2500" value="5.00" />
+			</div>
+			
+				<h3>Nuturition Totals (grams per serving Size)</h3>
+				<!--Sugar Protein Calories Carbs Fat-->
+			<div>
+				<label>Sugar</label>
+				<input type="number" id="sugar" style="font-size:1.5em; width:50%; float:right;"/>
+			</div>
+			
+			<div>
+				<label>Protein</label>
+				<input type="number" id="protein" style="font-size:1.5em; width:50%; float:right;"/>
+			</div>
+
+			<div>
+				<label>Calories</label>
+				<input type="number" id="calories" style="font-size:1.5em; width:50%; float:right;"/>
+			</div>
+
+			<div>
+				<label>Carbs</label>
+				<input type="number" id="carbs" style="font-size:1.5em; width:50%; float:right;"/>
+			</div>			
+		
+			<div>
+				<label>Fat</label>
+				<input type="number" id="fat" style="font-size:1.5em; width:50%; float:right;"/>
+			</div>
+			
+			<input type="button" id="submitNewPantryItem" value="Submit" />
+			
+			<span class="submitMsg" id="pantryItemMsg">*required fields</span>
+		</form>
+	</div>
+	
+	<div id="pantryItems">
+	</div>
+
+	<script>
+		// Attempting a workaround for broken google sign in button
+
+		var uiContainer = document.getElementById('firebaseui-auth-container');
+		setTimeout(function(){
+			console.log(uiContainer.children.length);
+			console.log(uiContainer.getElementsByClassName('firebaseui-idp-google'));
+			var old_element = uiContainer.getElementsByClassName('firebaseui-idp-google')[0];
+			var new_element = old_element.cloneNode(true);
+			old_element.parentNode.replaceChild(new_element, old_element);
+			new_element.addEventListener('click', function(){
+				var provider = new firebase.auth.GoogleAuthProvider();
+				provider.addScope('profile');
+				provider.addScope('email');
+				provider.addScope('https://www.googleapis.com/auth/calendar');
+				firebase.auth().signInWithPopup(provider).then(function(result){
+					var token = result.credential.accessToken;
+					var user = result.user;
+				})
+			})
+		}, 1000);
+	</script>
+</divi>
+
+<script type="text/javascript" src="scripts/auth.js"></script>
+<script type="text/javascript" src="scripts/data.js"></script>
+<script type="text/javascript" src="scripts/sort.js"></script>
+<script type="text/javascript" src="scripts/ingredientBank.js"></script>
+<script type="text/javascript" src="scripts/communityIngredientBank.js"></script>
+<script type="text/javascript" src="scripts/newRecipe.js"></script>
+<script type="text/javascript" src="scripts/newCommunityRecipe.js"></script>
+<script type="text/javascript" src="scripts/recipeList.js"></script>
+<script type="text/javascript" src="scripts/showButtons.js"></script>
+<script type="text/javascript" src="scripts/adjustUnits.js"></script>
+<script type="text/javascript" src="scripts/shoppingList.js"></script>
+<script type="text/javascript" src="scripts/pantry.js"></script>
+<script type="text/javascript" src="scripts/community.js"></script>
+
+</body>
+</html>

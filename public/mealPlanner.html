@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Meal Planner</title>
+<link rel="stylesheet" type="text/css" href="mealPlanner.css" >
+<!--GOOGLE FONT-->
+<link href="https://fonts.googleapis.com/css?family=Shadows+Into+Light" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
+</head>
+<body>
+
+<!-- Log in Operations, Show and hide different interfaces-->
+<div id="header">
+	<h1 id="appTitle">Meal Planner</h1>
+	<button class="showButton" id="showHome"      ><img id="homeIcon" src="pics/home.png"/></button>
+	<button class="showButton" id="showAddRecipe" >Add Recipe</button>
+	<button class="showButton" id="showPlanner"   >Plan Meals</button>
+	<button class="showButton" id="showPantry"    >My Pantry</button>
+</div>
+
+<!-- Welcome and Introduction Page -->
+<div id="introduction">
+	<h1 style="text-align:center">WELCOME TO MEAL PLANNER</h1>
+	<div style="width: 80%; margin:0 auto;">
+		<p style="font-size:1.3em">
+			Meal Planner helps you digitally store your recipes, pantry items, 
+			meal plans, and shopping lists. The tools here help you write 
+			accurate shopping lists and understand the price and nutruition 
+			info of your meal plans. 
+		</p>
+	</div>
+</div>
+
+<!-- Container housing Ingredient List & Add New Recipe Form 
+	 Made Visible with Show Button
+-->
+<div id="addRecipeContainer">
+
+	<!-- Add New Recipe Form 
+		 Submit button makes recipe object from user input and adds 
+		 it to the recipes array. 
+	
+	-->
+	<form id="newRecipeForm">
+		<input id="recipeName" type="text" placeholder="Recipe Name" style="width:60%"></input><br />
+		<select id="category" multiple size="4" style="font-size:1em; width:60%">
+			<option disabled>Categories</option>
+			<option value="Dairy Free">Dairy Free</option>
+			<option value="Ketogenic">Ketogenic</option>
+			<option value="Low Calorie">Low Calorie</option>
+			<option value="Low Sugar">Low Sugar</option>
+			<option value="Paleolithic">Paleolithic</option>
+			<option value="Vegan">Vegan</option>
+			<option value="Vegetarian">Vegetarian</option> 
+		</select><br />
+		<span><em>use ctrl to select multiple categories</em></span><br />
+		<label>Ingredients</label><br />
+		
+		<!-- Ingredients from "Ingredients List" are dropped or added here by click-->
+		<div id="ingredients" ondrop="ondrop_Handler(event)" ondragover="ondragover_Handler(event)">
+			Get ingredients for your recipe from the ingredients bank
+		</div>
+		
+		
+		<input type="button" id="clearIngredientsInRecipe" value="Clear" /><br />
+		<label>Directions</label><br />
+		<textarea id="newDirections" placeholder="Explain how to prepare this recipe"></textarea>
+		<input type="button" id="submitNewRecipe" value="Submit" /><br />
+		<span class="submitMsg" id="recipeMsg"></span>
+	</form>
+	
+	<div id="chooseIngredients">
+	    <h2>Ingredients Bank</h2>
+	    <h4>Add ingredients to your recipe by clicking and dragging<br />
+		or by selecting the plus symbol on the ingredient<br />
+		(the red 'x' removes the ingredient from its container)</h4>
+		<div style="padding:5px;">
+			<input type="text" id="searchIngInput" placeholder="Search" />
+			<span class="sortBySpan">Sort By</span>
+			<select id="ingredientSort">
+				<!--ADD SORTING-->
+				<option value="az" selected>A-Z</option>
+				<option value="za" >Z-A</option> 
+			</select>
+		</div>
+		
+		<!-- NEW INGREDIENT FORM -->
+		<input id="newIngredient" type="text" placeholder="new ingredient"/>
+		<select id="unit" class="unitsSelect">
+		</select>
+		<input type="button" id="submitNewIngredient" value="Submit" /><br />
+		<span class="submitMsg" id="ingredientMsg"></span>
+		
+		<!-- HERE GO ALL OF THE INGREDIENTS FROM INGREDIENT LIST -->
+		<div id="ingredientBank"></div>
+	</div>
+</div>
+
+<!-- Container housing Recipes List & Add New Recipe Form 
+	 Made Visible with Show Button
+-->
+<div id="chooseRecipeContainer">
+
+	<div id="recipeList">
+		<div id="recipeListHeader">
+			<h1>Your Recipes</h1>
+			<input type="text" id="searchRecipesInput" placeholder="Recipe Name" />
+			<div style="margin-top:5px">
+				<span class="sortBySpan">Sort By</span>
+				<select id="recipeSort">
+					<!--ADD SORTING-->
+					<option value="A-Z" selected>A-Z</option>
+					<option value="Z-A" >Z-A</option>
+					<option value="Ketogenic">Ketogenic</option>
+					<option value="Vegetarian">Vegetarian</option>
+					<option value="Vegan">Vegan</option>   
+				</select>
+			</div>
+		</div>
+		
+		<div id="recipes">
+		</div>
+		
+	</div>
+	
+	<div id="shoppingList">
+		
+		<div class="plannerDiv">
+			<h2 style="text-align:center">Shopping Lists</h2>
+			
+			<!-- SAVED SHOPPING LISTS DISPLAY-->
+			<div id="savedShoppingLists">	
+			</div>
+			
+			
+			<!-- SAVE SHOPPING LIST FORM -->
+			<input type="text" id="shoppingListName" placeholder="Shopping List Name"/>
+			<input type="button" id="saveShoppingList" class="shoppingListBtn" value="Save" />
+
+			<div id="saveShoppingListMsg">
+			</div>
+		</div>
+		
+		<!-- SCHEDULED RECIPES DISPLAY -->
+		<div class="plannerDiv">
+			<h2>Scheduled Recipes</h2>
+			<div id="scheduledRecipesDisplay">
+			</div>
+		</div>
+		
+		<!-- SHOPPING LIST DISPLAY -->
+		<div class="plannerDiv">
+			<h2 style="display:inline-block;">Shopping List</h2>
+			<div id="shoppingListTarget">
+			</div>
+			<input type="button" id="clearShoppingList" style="background-color:crimson" class="shoppingListBtn" value="Clear Scheduled Recipes & Shopping List" />
+		</div>
+		
+	</div>
+</div>
+
+
+<!-- Pantry Items List 
+
+-->
+<div id="myPantry">
+	<div id="pantryPageHeader">
+	
+		<div id="pantryControls"> 
+			<input type="button" id="openNewPantryItemForm" value="New Pantry Item">
+			<!--TODO make predictive search input-->
+			<input type="text" id="searchPantryItemsInput" placeholder="Search"/>
+			<label class="sortBySpan">Sort By</label>
+			<select id="pantryItemSort">
+				<!--ADD ALL MEASUREMENTS-->
+				<option value="az" selected>A-Z</option>
+				<option value="za">Z-A</option>
+			</select>
+		</div>
+		
+		<div id="pantryTotals">
+			<h3 style="margin:0; padding:0;">Pantry Totals</h3>
+			<div>
+				<div><label>Sugar: </label><span id="sugarTotal"></span>g</div>
+				<div><label>Protein: </label><span id="proteinTotal"></span>g</div>
+			</div>
+			<div>
+				<div><label>Calories: </label><span id="caloriesTotal"></span></div>
+				<div><label>Carbs: </label><span id="carbsTotal"></span>g</div>
+			</div>
+			<div>
+				<div><label>Fat: </label><span id="fatTotal"></span>g</div>
+				<div><label>Total Cost: $</label><span id="storeTotalPrice"></span><br /></div>
+			</div>
+		</div>
+	
+	</div>
+	
+	<!--add new pantry item form-->
+	<div id="pantryModal">
+		<form id="newPantryItemForm">
+			<span tabindex="0" id="closeModal">&times;</span>
+		
+			<h1>New Pantry Item</h1>
+			<div>
+				<label>*Product Name: </label>
+				<input type="text" id="pantryItemName" style="width:50%; float:right"/>
+			</div>
+		
+			<div>
+				<label>*Corresponding Ingredient</label>
+				<select id="correspondingIngredient" style="width:50%; float:right;">
+				</select>
+			</div>
+			
+			<!-- TODO allow user to add new ingredient -->
+			<!-- NEW INGREDIENT FORM -->
+			<div style="text-align:center; background-color:rgba(200,200,200,0.7);padding:10px; border-radius:5px;">
+				<h3>Don't see the ingredient you need? Add it here</h3>
+				<input id="newIngredientOnPantryForm" type="text" placeholder="new ingredient"/>
+				<select id="unitOnPantryForm" class="unitsSelect">
+				</select>
+				<input type="button" id="submitNewIngredientOnPantryForm" value="Submit" /><br />
+				<span class="submitMsg" id="ingredientMsgOnPantryForm"></span>
+			</div>
+			
+			<div>
+				<label>*Item Size</label>
+				<input type="number" id="pantryItemAmount" style="font-size:1.5em; width:50%; float:right;"/>
+			</div>
+		
+			<div><!--TODO make predictive search input-->
+				<label>*Item Size Units</label>
+				<select id="pantryItemUnit" class="unitsSelect" style="width:50%; float:right;">
+				</select>
+			</div>
+
+			<div>
+				<label>Serving Size</label>
+				<input type="number" id="servingSize" style="font-size:1.5em; width:50%; float:right;"/>
+			</div>
+			
+			<div><!--TODO make predictive search input-->
+				<label>Serving Size Units</label>
+				<select id="pantryItemServingSizeUnit" class="unitsSelect" style="width:50%; float:right;">
+				</select>
+			</div>
+		
+			<div>
+				<label>Store</label>
+				<input type="text" id="pantryItemStore" style="float:right; width:50%;"/>
+			</div>
+			
+			<div>
+				<label>Price: $</label>
+				<input id="pantryItemPrice" style="font-size:1.5em; float:right; width:50%" type="number" min="0.01" step="0.01" max="2500" value="5.00" />
+			</div>
+			
+				<h3>Nuturition Totals (grams per serving Size)</h3>
+				<!--Sugar Protein Calories Carbs Fat-->
+			<div>
+				<label>Sugar</label>
+				<input type="number" id="sugar" style="font-size:1.5em; width:50%; float:right;"/>
+			</div>
+			
+			<div>
+				<label>Protein</label>
+				<input type="number" id="protein" style="font-size:1.5em; width:50%; float:right;"/>
+			</div>
+
+			<div>
+				<label>Calories</label>
+				<input type="number" id="calories" style="font-size:1.5em; width:50%; float:right;"/>
+			</div>
+
+			<div>
+				<label>Carbs</label>
+				<input type="number" id="carbs" style="font-size:1.5em; width:50%; float:right;"/>
+			</div>			
+		
+			<div>
+				<label>Fat</label>
+				<input type="number" id="fat" style="font-size:1.5em; width:50%; float:right;"/>
+			</div>
+			
+			<input type="button" id="submitNewPantryItem" value="Submit" />
+			
+			<span class="submitMsg" id="pantryItemMsg">*required fields</span>
+		</form>
+	</div>
+	
+	<div id="pantryItems">
+	</div>
+</divi>
+
+<script type="text/javascript" src="scripts/data.js"></script>
+<script type="text/javascript" src="scripts/sort.js"></script>
+<script type="text/javascript" src="scripts/showButtons.js"></script>
+<script type="text/javascript" src="scripts/ingredientBank.js"></script>
+<script type="text/javascript" src="scripts/newRecipe.js"></script>
+<script type="text/javascript" src="scripts/recipeList.js"></script>
+<script type="text/javascript" src="scripts/adjustUnits.js"></script>
+<script type="text/javascript" src="scripts/shoppingList.js"></script>
+<script type="text/javascript" src="scripts/pantry.js"></script>
+
+<!--<script type="text/javascript" src=".js"></script>-->
+</body>
+</html>
