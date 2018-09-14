@@ -19,7 +19,10 @@ document.getElementById('submitNewPantryItem').addEventListener('click', functio
 	
 	if(validatePantryItem(pantryItem))
 	{
-		localData.pantryItemList.push(pantryItem);
+	    if (!localData.pantryItemList.noBarcode){
+	        localData.pantryItemList.noBarcode = [];
+        }
+		localData.pantryItemList.noBarcode.push(pantryItem);
 	
 		//save database
 		updateData();
@@ -65,38 +68,72 @@ function clearPantryItemForm(){
 
 function updatePantry(sortFn = 'az', dataArr = localData.pantryItemList){
 	
-	//whip select clean`
+	//wipe select clean`
 	var node = document.getElementById('pantryItems');
 	while (node.firstChild)
 	{
 		node.removeChild(node.firstChild);
 	}
+
+	// temp rewrite code
+    if((!localData.pantryItemList.noBarcode) || (!localData.pantryItemList.barcode)) {
+        if (!localData.pantryItemList.noBarcode) {
+            localData.pantryItemList.noBarcode = {};
+            for (item in localData.pantryItemList) {
+                if (parseFloat(item) < 1000) {
+                    localData.pantryItemList.noBarcode.push(localData.pantryItemList[item]);
+                    delete localData.pantryItemList[item];
+                }
+            }
+
+        }
+        if (!localData.pantryItemList.barcode) {
+            localData.pantryItemList.barcode = {};
+            for (item in localData.pantryItemList) {
+                if (parseFloat(item) >= 1000) {
+                    localData.pantryItemList.barcode[item] = localData.pantryItemList[item];
+                    delete localData.pantryItemList[item];
+                }
+            }
+        }
+        console.log(localData.pantryItemList);
+
+        //save database
+        updateData();
+    }
 	
 	//sort array
 	//sort the objects in the array by name alphabetically
-	var pantryArr = localData.pantryItemList;
+	let pantryArr = [];
+	for (item in localData.pantryItemList.noBarcode){
+		pantryArr.push(localData.pantryItemList.noBarcode[item]);
+	}
+	for (item in localData.pantryItemList.barcode){
+	    pantryArr.push(localData.pantryItemList.barcode[item])
+    }
+
 	if (pantryArr && sortFn == 'az')
 		pantryArr.sort(compareAlpha);
 	else if (pantryArr && sortFn == 'za')
 		pantryArr.sort(compareReverseAlpha);	
 	
 	
-	dataArr.forEach(function(curItem){
+	pantryArr.forEach(function(curItem){
 		
 		//make div for pantry item
-		var div = document.createElement('div');
+		let div = document.createElement('div');
 		div.classList.add('pantryItem');
 		div.dataset.json = JSON.stringify(curItem);
 			//add basic header
-			var header = document.createElement('div');
+			let header = document.createElement('div');
 			header.classList.add('pantryItemHeaderDiv');
 			
-				var amountDiv = document.createElement('div');
-					var amtLabel = document.createElement('label');
+				let amountDiv = document.createElement('div');
+					let amtLabel = document.createElement('label');
 					amtLabel.innerHTML = "Quantity";
 					amtLabel.classList.add('amtLabel');
 					
-					var amountIn = document.createElement('input');
+					let amountIn = document.createElement('input');
 					amountIn.classList.add('pantryItemAmountIn');
 					amountIn.setAttribute('type','number');
 					amountIn.setAttribute('min', 0);
@@ -485,20 +522,18 @@ function updatePantryTotals(){
     var propsArr = ['sugar', 'protein', 'calories', 'carbs', 'fat', 'price'];
 	
 	//loops through each pantry item
-	localData.pantryItemList.forEach(function(curItem, ind, arr){
-		
-		//loops through each property
-		for(var i = 0; i < 6; i++){
-			
-			//check if item is in stock & check if item has the current property 
-			if(!isNaN(parseInt(curItem.amountInPantry)) && !isNaN(parseFloat(curItem[propsArr[i]])))
+	let pantryList = localData.pantryItemList;
+	for (item in pantryList){
+		let curItem = pantryList[item];
+		for (let i = 0; i < 6; i++){
+			if (!isNaN(parseInt(curItem.amountInPantry)) && !isNaN(parseFloat(curItem[propsArr[i]])))
 			{
-				var quantity = parseFloat(curItem.amountInPantry);
-				var propAmount = parseFloat(curItem[propsArr[i]]);
-				totalsArr[i] += quantity * propAmount;
+                let quantity = parseFloat(curItem.amountInPantry);
+                let propAmount = parseFloat(curItem[propsArr[i]]);
+                totalsArr[i] += quantity * propAmount;
 			}
 		}
-	});
+	}
 		
 		//handle store info
 		
