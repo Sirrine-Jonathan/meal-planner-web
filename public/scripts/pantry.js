@@ -1,20 +1,45 @@
 document.getElementById('submitNewPantryItem').addEventListener('click', function(){
 	
-	var pantryItem = {
-		'name': document.getElementById('pantryItemName').value,
-		'correspondingIngredient': document.getElementById('correspondingIngredient').value,
-		'unit': document.getElementById('pantryItemUnit').value,
-		'servingSizeUnit': document.getElementById('pantryItemServingSizeUnit').value,
-		'amount': document.getElementById('pantryItemAmount').value,
-		'servingSize': document.getElementById('servingSize').value,
-		'store': document.getElementById('pantryItemStore').value,
-		'price': document.getElementById('pantryItemPrice').value,
-		'sugar': document.getElementById('sugar').value,
-		'protein': document.getElementById('protein').value,
-		'calories': document.getElementById('calories').value,
-		'carbs': document.getElementById('carbs').value,
-		'fat': document.getElementById('fat').value,
-		'amountInPantry': 1
+	let pantryItem = {
+
+		// strings
+		'name': getValueFromElement(document.getElementById('pantryItemName')),
+		'correspondingIngredient': getValueFromElement(document.getElementById('correspondingIngredient')),
+		'unit': getValueFromElement(document.getElementById('pantryItemUnit')),
+		'servingSizeUnit': getValueFromElement(document.getElementById('pantryItemServingSizeUnit')),
+        'store': getValueFromElement(document.getElementById('pantryItemStore')),
+
+		// floats
+		'amount': getFloatFromElement(document.getElementById('pantryItemAmount')),
+		'servingSize': getFloatFromElement(document.getElementById('servingSize')),
+		'price': getFloatFromElement(document.getElementById('pantryItemPrice')),
+		'sugar': getIntFromElement(document.getElementById('sugar')),
+		'protein': getIntFromElement(document.getElementById('protein')),
+		'calories': getIntFromElement(document.getElementById('calories')),
+		'carbs': getIntFromElement(document.getElementById('carbs')),
+		'fat': getIntFromElement(document.getElementById('fat')),
+		'amountInPantry': parseInt(1)
+	};
+
+	function getValueFromElement(el){
+		if (el && el.value !== ""){
+			return el.value.toString();
+		}
+		return null;
+	}
+
+	function getFloatFromElement(el){
+		if (el && el.value !== ""){
+			return parseFloat(el.value);
+		}
+		return null;
+	}
+
+	function getIntFromElement(el){
+		if (el && el.value !== ""){
+			return parseInt(el.value);
+		}
+		return null;
 	}
 	
 	if(validatePantryItem(pantryItem))
@@ -22,7 +47,12 @@ document.getElementById('submitNewPantryItem').addEventListener('click', functio
 	    if (!localData.pantryItemList.noBarcode){
 	        localData.pantryItemList.noBarcode = [];
         }
-		localData.pantryItemList.noBarcode.push(pantryItem);
+        let length = 0;
+	    let list = localData.pantryItemList.noBarcode;
+	    for (i in list){
+	    	length++;
+		}
+		localData.pantryItemList.noBarcode[length] = pantryItem;
 	
 		//save database
 		updateData();
@@ -69,7 +99,7 @@ function clearPantryItemForm(){
 function updatePantry(sortFn = 'az', dataArr = localData.pantryItemList){
 	
 	//wipe select clean`
-	var node = document.getElementById('pantryItems');
+	let node = document.getElementById('pantryItems');
 	while (node.firstChild)
 	{
 		node.removeChild(node.firstChild);
@@ -81,7 +111,7 @@ function updatePantry(sortFn = 'az', dataArr = localData.pantryItemList){
             localData.pantryItemList.noBarcode = {};
             for (item in localData.pantryItemList) {
                 if (parseFloat(item) < 1000) {
-                    localData.pantryItemList.noBarcode.push(localData.pantryItemList[item]);
+                    localData.pantryItemList.noBarcode[item] = localData.pantryItemList[item];
                     delete localData.pantryItemList[item];
                 }
             }
@@ -142,15 +172,15 @@ function updatePantry(sortFn = 'az', dataArr = localData.pantryItemList){
 						
 						
 						//find the index of the current pantry item by comparing it to storage
-						var index;
+						let index;
 						localData.pantryItemList.forEach(function(curObj, ind, arr){
-							var testString = JSON.stringify(curObj);
+							let testString = JSON.stringify(curObj);
 							if(div.dataset.json == testString)
 								index = ind;
 						});
 						
 						//change amount in pantry
-						var amountParsed = parseFloat(this.value);
+						let amountParsed = parseFloat(this.value);
 						if(isNaN(amountParsed))
 							amountParsed = 0;
 						
@@ -181,19 +211,19 @@ function updatePantry(sortFn = 'az', dataArr = localData.pantryItemList){
 					amountDiv.appendChild(amountIn);
 				header.appendChild(amountDiv);
 				
-				var name = document.createElement('span');
+				let name = document.createElement('span');
 				name.innerHTML = curItem.name;
 				header.appendChild(name);
 				
-				var detailsBtn = document.createElement('input');
+				let detailsBtn = document.createElement('input');
 				detailsBtn.setAttribute('type', 'button');
-				var down = decodeHtml('&#8681;');
-				var up = decodeHtml('&#8679;');
+				let down = decodeHtml('&#8681;');
+				let up = decodeHtml('&#8679;');
 				detailsBtn.value = down;
 				detailsBtn.classList.add('pantryItemShowDetailsBtn');
 				detailsBtn.addEventListener('click',function(){
-					var itemDiv = this.parentElement.parentElement;
-					var bodyDiv = itemDiv.getElementsByClassName('pantryItemBodyDiv')[0];
+					let itemDiv = this.parentElement.parentElement;
+					let bodyDiv = itemDiv.getElementsByClassName('pantryItemBodyDiv')[0];
 					if(bodyDiv.style.display == 'block')
 					{
 						bodyDiv.style.display = 'none';
@@ -210,47 +240,47 @@ function updatePantry(sortFn = 'az', dataArr = localData.pantryItemList){
 				header.appendChild(detailsBtn);
 			div.appendChild(header);
 			
-			var body = document.createElement('div');
+			let body = document.createElement('div');
 			body.classList.add('pantryItemBodyDiv');
 			
 			//info div
-			var infoDiv = document.createElement('div');
+			let infoDiv = document.createElement('div');
 			infoDiv.classList.add('pantryItemInfoDiv');
 			
 			//add info to div
-			var colorSwitcher = 1;
-			for (var prop in curItem) {
-				if (curItem.hasOwnProperty(prop) && prop != 'amountInPantry') {
+			let colorSwitcher = 1;
+			let props = ['name','correspondingIngredient','amount','unit','servingSize','servingSizeUnit',
+				'calories','carbs','fat','protein','sugar','store','price'];
+			props.forEach(prop => {
+					let color = (colorSwitcher % 2 == 0) ? '#ffeeff':'#cadef7';
+					let row = document.createElement('div');
 					
-					var color = (colorSwitcher % 2 == 0) ? '#ffeeff':'#cadef7';
-					var row = document.createElement('div');
-					
-					var label = document.createElement('label');
+					let label = document.createElement('label');
 					label.innerHTML = prop + ': ';
 					label.classList.add('pantryItemLabel');
 					row.appendChild(label);
 					
-					var span = document.createElement('span');
+					let span = document.createElement('span');
 					if (prop == 'price')
-						span.innerHTML = '$' + curItem[prop];
+						span.innerHTML = (curItem[prop]) ? ('$' + curItem[prop]):'';
 					else
-						span.innerHTML = curItem[prop];
+						span.innerHTML = (curItem[prop]) ? (curItem[prop]):'';
 					span.style.float = 'right';
 					span.classList.add('pantryItem'+prop.toUpperCase()+'Display');
 					row.appendChild(span);
 					row.style.backgroundColor = color;
 					colorSwitcher++;
 					infoDiv.appendChild(row);
-				}
-			}	
+			});
+
 			body.appendChild(infoDiv);
 			
 			//functions button div
-			var fnDiv = document.createElement('div');
+			let fnDiv = document.createElement('div');
 			fnDiv.classList.add('pantryFnDiv');
 
 				//edit
-				var editBtn = document.createElement('input');
+				let editBtn = document.createElement('input');
 				editBtn.setAttribute('type','button');
 				editBtn.value = "Edit";
 				editBtn.dataset.status = 'edit';
@@ -258,7 +288,7 @@ function updatePantry(sortFn = 'az', dataArr = localData.pantryItemList){
 				fnDiv.appendChild(editBtn);
 				
 				//delete
-				var deleteBtn = document.createElement('input');
+				let deleteBtn = document.createElement('input');
 				deleteBtn.setAttribute('type', 'button');
 				deleteBtn.value = "Delete";
 				deleteBtn.addEventListener('click', deletePantryItem);
@@ -266,8 +296,8 @@ function updatePantry(sortFn = 'az', dataArr = localData.pantryItemList){
 			body.appendChild(fnDiv);
 			
 		div.appendChild(body);
-		document.getElementById('pantryItems').appendChild(div);	
-	})
+		document.getElementById('pantryItems').appendChild(div);
+    });
 }
 
 document.getElementById('searchPantryItemsInput').addEventListener('input', function(){
@@ -276,16 +306,16 @@ document.getElementById('searchPantryItemsInput').addEventListener('input', func
 
 function activeSearch(searchCriteria){
 	
-	var searchCriteriaArr = searchCriteria.trim().split('').map(function (ch, i, array) { return ch == ' ' ? array[i - 1] + ' ' : ch });
-	var numOfLetters = searchCriteriaArr.length;
-	var results = [];
+	let searchCriteriaArr = searchCriteria.trim().split('').map(function (ch, i, array) { return ch == ' ' ? array[i - 1] + ' ' : ch });
+	let numOfLetters = searchCriteriaArr.length;
+	let results = [];
 	
 	//data loop
 	localData.pantryItemList.forEach(function(pantryObj, ind, arr){
-		var testPass = true;
-		var testString = pantryObj.name; 	 
-		var testArr = testString.trim().split('').map(function (ch, i, array) { return ch == ' ' ? array[i - 1] + ' ' : ch });
-		for (var i = 0; i < numOfLetters; i++)
+		let testPass = true;
+		let testString = pantryObj.name; 	 
+		let testArr = testString.trim().split('').map(function (ch, i, array) { return ch == ' ' ? array[i - 1] + ' ' : ch });
+		for (let i = 0; i < numOfLetters; i++)
 		{
 			if(testArr[i].toUpperCase() != searchCriteriaArr[i].toUpperCase())
 				testPass = false;
@@ -298,7 +328,7 @@ function activeSearch(searchCriteria){
 }
 
 document.getElementById('pantryItemSort').addEventListener('change', function() {
-	var sortCue = this.value;
+	let sortCue = this.value;
 	updatePantry(sortCue);
 })
 
@@ -317,7 +347,7 @@ function updateIngredientsDropdown(node){
 	}
 	//populate correspondingIngredient select
 	localData.ingredientList.forEach(function(curIng){
-		var option = document.createElement('option');
+		let option = document.createElement('option');
 		option.value = curIng.name;
 		option.innerHTML = curIng.name + "  (" + curIng.unit + ")";
 		node.appendChild(option);
@@ -344,16 +374,34 @@ window.onclick = function(event){
 }
 
 function deletePantryItem(){
-	var div = this.parentElement.parentElement.parentElement;
-	var index;
-	localData.pantryItemList.forEach(function(curObj, ind, arr){
-		var testString = JSON.stringify(curObj);
-		if(div.dataset.json == testString)
-			index = ind;
-	})
-	if(index >= 0)
-		localData.pantryItemList.splice(index, 1);
-	
+	let itemDiv = this.parentElement.parentElement.parentElement;
+
+    //update localData
+    let index = null;
+    let set = 'noBarcode';
+    for (item in localData.pantryItemList.noBarcode){
+        let testString = JSON.stringify(localData.pantryItemList.noBarcode[item]);
+        if (itemDiv.dataset.json === testString) {
+            index = item;
+            break;
+        }
+    }
+
+    if (!index) {
+        set = 'barcode';
+        for (item in localData.pantryItemList.barcode) {
+            let testString = JSON.stringify(localData.pantryItemList.barcode[item]);
+            if (itemDiv.dataset.json === testString) {
+                index = item;
+                break;
+            }
+        }
+    }
+
+
+	if(index) {
+     	delete localData.pantryItemList[set][index];
+    }
 	updateData(updatePantry);
 }
 
@@ -362,10 +410,10 @@ function editPantryItem(){
 	{		
 		//state changes
 			//inputs
-		var itemBodyDiv = this.parentElement.parentElement;
-		var itemDiv = itemBodyDiv.parentElement;
-		var itemObj = JSON.parse(itemDiv.dataset.json);
-		var infoDiv = itemDiv.getElementsByClassName('pantryItemInfoDiv')[0];
+		let itemBodyDiv = this.parentElement.parentElement;
+		let itemDiv = itemBodyDiv.parentElement;
+		let itemObj = JSON.parse(itemDiv.dataset.json);
+		let infoDiv = itemDiv.getElementsByClassName('pantryItemInfoDiv')[0];
 		itemDiv.getElementsByClassName('pantryItemShowDetailsBtn')[0].setAttribute('disabled', true);
 		
 		//whipeInfoDivClean
@@ -374,57 +422,56 @@ function editPantryItem(){
 			infoDiv.removeChild(infoDiv.firstChild);
 		}
 		
-		var colorSwitcher = 1;
-		for (var prop in itemObj) {
-			
-			if (itemObj.hasOwnProperty(prop) && prop != 'amountInPantry') {
-				
-				var color  = (colorSwitcher % 2 == 0) ? '#ffeeff':'#cadef7'; 
-				var row = document.createElement('div');
-				row.style.verticalAlign;
-				
-				var label = document.createElement('label');
-				label.innerHTML = prop + ': ';
-				label.classList.add('pantryItemLabel');
-				row.appendChild(label);
-				
-				if (prop == 'correspondingIngredient')
-				{
-					var input = document.createElement('select');
-					input.classList.add('unitSelect');
-					updateIngredientsDropdown(input);
-				}
-				else if (prop == 'servingSizeUnit')
-				{
-					var input = document.createElement('select');
-					input.classList.add('unitSelect');
-					setupUnitSelects(unitsArr, input, true);
-				}
-				else if (prop == 'unit')
-				{
-					var input = document.createElement('select');
-					input.classList.add('unitsSelect');
-					setupUnitSelects(unitsArr, input, true);
-				}
-				else
-				{
-					var input = document.createElement('input');
-				}
-				
-				//apply to all inputs
-				input.style.float = 'right';
-				input.style.width = "30%";
-				input.style.fontSize = '15px';
-				
-				input.classList.add('pantryItem'+prop.toUpperCase()+'Input');
-				input.value = itemObj[prop];
-				
-				row.appendChild(input);
-				row.style.backgroundColor = color;
-				colorSwitcher++;
-				infoDiv.appendChild(row);
-			}
-		}	
+		let colorSwitcher = 1;
+        let props = ['name','correspondingIngredient','amount','unit','servingSize','servingSizeUnit',
+            'calories','carbs','fat','protein','sugar','store','price'];
+        props.forEach(prop => {
+            let color  = (colorSwitcher % 2 == 0) ? '#ffeeff':'#cadef7';
+            let row = document.createElement('div');
+            row.style.verticalAlign;
+
+            let label = document.createElement('label');
+            label.innerHTML = prop + ': ';
+            label.classList.add('pantryItemLabel');
+            row.appendChild(label);
+
+            let input;
+            if (prop === 'correspondingIngredient')
+            {
+                input = document.createElement('select');
+                input.classList.add('unitSelect');
+                updateIngredientsDropdown(input);
+            }
+            else if (prop === 'servingSizeUnit')
+            {
+                input = document.createElement('select');
+                input.classList.add('unitSelect');
+                setupUnitSelects(unitsArr, input, true);
+            }
+            else if (prop === 'unit')
+            {
+                input = document.createElement('select');
+                input.classList.add('unitsSelect');
+                setupUnitSelects(unitsArr, input, true);
+            }
+            else
+            {
+                input = document.createElement('input');
+            }
+
+            //apply to all inputs
+            input.style.float = 'right';
+            input.style.width = "30%";
+            input.style.fontSize = '15px';
+
+            input.classList.add('pantryItem'+prop.toUpperCase()+'Input');
+            input.value = (itemObj[prop]) ? itemObj[prop]:'';
+
+            row.appendChild(input);
+            row.style.backgroundColor = color;
+            colorSwitcher++;
+            infoDiv.appendChild(row);
+		});
 		
 			//button
 		this.value = "Save";
@@ -433,50 +480,87 @@ function editPantryItem(){
 	else if(this.dataset.status == 'save')
 	{
 		//save input states to corresponding pantry item obj
-		var itemBodyDiv = this.parentElement.parentElement;
-		var itemDiv = itemBodyDiv.parentElement;
-		var itemObj = JSON.parse(itemDiv.dataset.json);
-		var infoDiv = itemDiv.getElementsByClassName('pantryItemInfoDiv')[0];
+		let itemBodyDiv = this.parentElement.parentElement;
+		let itemDiv = itemBodyDiv.parentElement;
+		let itemObj = JSON.parse(itemDiv.dataset.json);
+		let infoDiv = itemDiv.getElementsByClassName('pantryItemInfoDiv')[0];
 		itemDiv.getElementsByClassName('pantryItemShowDetailsBtn')[0].setAttribute('disabled', false);
-		
-		//SAVE
-		
-		//check if there is a serving size unit... can't remember why. just do it. 
-		var servingSizeUnit;
-		if(infoDiv.getElementsByClassName('pantryItemSERVINGSIZEUNITInput')[0])
-			servingSizeUnit = infoDiv.getElementsByClassName('pantryItemSERVINGSIZEUNITInput')[0].value;
-		else
-			servingSizeUnit = null;
-		
-		var tempObj = {
-			'name': infoDiv.getElementsByClassName('pantryItemNAMEInput')[0].value,
-			'correspondingIngredient': infoDiv.getElementsByClassName('pantryItemCORRESPONDINGINGREDIENTInput')[0].value,
-			'amountInPantry': itemObj.amountInPantry,
-			'amount': infoDiv.getElementsByClassName('pantryItemAMOUNTInput')[0].value,
-			'calories': infoDiv.getElementsByClassName('pantryItemCALORIESInput')[0].value,
-			'carbs': infoDiv.getElementsByClassName('pantryItemCARBSInput')[0].value,
-			'fat': infoDiv.getElementsByClassName('pantryItemFATInput')[0].value,
-			'price': infoDiv.getElementsByClassName('pantryItemPRICEInput')[0].value,
-			'protein': infoDiv.getElementsByClassName('pantryItemPROTEINInput')[0].value,
-			'servingSize': infoDiv.getElementsByClassName('pantryItemSERVINGSIZEInput')[0].value,
-			'store': infoDiv.getElementsByClassName('pantryItemSTOREInput')[0].value,
-			'sugar': infoDiv.getElementsByClassName('pantryItemSUGARInput')[0].value,
-			'unit': infoDiv.getElementsByClassName('pantryItemUNITInput')[0].value,
-			'servingSizeUnit': servingSizeUnit
-		}
+
+        function getValueFromElement(el){
+            if (el && el.value !== ""){
+                return el.value.toString();
+            }
+            return null;
+        }
+
+        function getFloatFromElement(el){
+            if (el && el.value !== ""){
+                return parseFloat(el.value);
+            }
+            return null;
+        }
+
+        function getIntFromElement(el){
+            if (el && el.value !== ""){
+                return parseInt(el.value);
+            }
+            return null;
+        }
+
+        let servingSizeUnit;
+        if(infoDiv.getElementsByClassName('pantryItemSERVINGSIZEUNITInput')[0])
+            servingSizeUnit = infoDiv.getElementsByClassName('pantryItemSERVINGSIZEUNITInput')[0].value;
+        else
+            servingSizeUnit = null;
+
+
+        let tempObj = {
+
+            // strings
+            'name': getValueFromElement(infoDiv.getElementsByClassName('pantryItemNAMEInput')[0]),
+            'correspondingIngredient': getValueFromElement(infoDiv.getElementsByClassName('pantryItemCORRESPONDINGINGREDIENTInput')[0]),
+            'unit': getValueFromElement(infoDiv.getElementsByClassName('pantryItemUNITInput')[0]),
+            'servingSizeUnit': getValueFromElement(infoDiv.getElementsByClassName('pantryItemSERVINGSIZEUNITInput')[0]),
+            'store': getValueFromElement(infoDiv.getElementsByClassName('pantryItemSTOREInput')[0]),
+
+            // floats
+            'amount': getFloatFromElement(infoDiv.getElementsByClassName('pantryItemAMOUNTInput')[0]),
+            'servingSize': getFloatFromElement(infoDiv.getElementsByClassName('pantryItemSERVINGSIZEInput')[0]),
+            'price': getFloatFromElement(infoDiv.getElementsByClassName('pantryItemPRICEInput')[0]),
+            'sugar': getIntFromElement(infoDiv.getElementsByClassName('pantryItemSUGARInput')[0]),
+            'protein': getIntFromElement(infoDiv.getElementsByClassName('pantryItemPROTEINInput')[0]),
+            'calories': getIntFromElement(infoDiv.getElementsByClassName('pantryItemCALORIESInput')[0]),
+            'carbs': getIntFromElement(infoDiv.getElementsByClassName('pantryItemCARBSInput')[0]),
+            'fat': getIntFromElement( infoDiv.getElementsByClassName('pantryItemFATInput')[0]),
+            'amountInPantry': parseInt(itemObj.amountInPantry)
+        };
 		
 		//update localData 
-		var index;
-		localData.pantryItemList.forEach(function(curObj, ind, arr){
-			var testString = JSON.stringify(curObj);
-			if(itemDiv.dataset.json == testString)
-				index = ind;
-		})
-		if(index >= 0)
+		let index;
+		let set = 'noBarcode';
+        for (item in localData.pantryItemList.noBarcode){
+        	let testString = JSON.stringify(localData.pantryItemList.noBarcode[item]);
+        	if (itemDiv.dataset.json === testString) {
+                index = item;
+                break;
+            }
+        }
+
+        if (!index) {
+        	set = 'barcode';
+            for (item in localData.pantryItemList.barcode) {
+                let testString = JSON.stringify(localData.pantryItemList.barcode[item]);
+                if (itemDiv.dataset.json === testString) {
+                    index = item;
+                    break;
+                }
+            }
+        }
+
+		if(index)
 		{
-			
 			itemDiv.dataset.json = JSON.stringify(tempObj);
-			localData.pantryItemList[index] = tempObj;
+			localData.pantryItemList[set][index] = tempObj;
 			updateData();
 			updatePantry();
 			console.log(localData.pantryItemList);
@@ -518,8 +602,8 @@ function setupTwo(ingArr, formBtn, newIngHTML, newUnitHTML, msg)
 }
 
 function updatePantryTotals(){
-	var totalsArr = [0, 0, 0, 0, 0, 0];
-    var propsArr = ['sugar', 'protein', 'calories', 'carbs', 'fat', 'price'];
+	let totalsArr = [0, 0, 0, 0, 0, 0];
+    let propsArr = ['sugar', 'protein', 'calories', 'carbs', 'fat', 'price'];
 	
 	//loops through each pantry item
 	let pantryList = localData.pantryItemList;

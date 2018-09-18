@@ -1,4 +1,4 @@
-var shoppingListSession = {
+let shoppingListSession = {
 	"bools": {
 		'enableStock': false,
 		'customizeStock': null,
@@ -13,9 +13,9 @@ var shoppingListSession = {
 	'actualItemsOnList': [],
 }
 
-var readyList = [];
-var ready = false;
-var notReadyCount = 0;
+let readyList = [];
+let ready = false;
+let notReadyCount = 0;
 function ReadyListItem(name, amount, unit)
 {
 	this.name = name;
@@ -27,8 +27,8 @@ function readyListDisplay()
 	console.log(readyList);
 	
 	//update ui to reflect ready state
-	var status = document.getElementById('listStatus');
-	var statusDetails = document.getElementById('listStatusDetails');
+	let status = document.getElementById('listStatus');
+	let statusDetails = document.getElementById('listStatusDetails');
 	
 	if (ready) {
 		status.innerHTML = "List Ready";
@@ -56,21 +56,21 @@ function regenShoppingList()
 	
 	//stores bools and logs them for debugging
 	console.log(storeBools());
-	var A = shoppingListSession.bools.enableStock;
-	var B = shoppingListSession.bools.customizeStock;
-	var C = shoppingListSession.bools.enablePantryItems;
-	var D = shoppingListSession.bools.customizePantryItems;
-	var store = shoppingListSession.preferences.store;
-	var lowOrHigh = shoppingListSession.preferences.lowOrHigh;
-	var property = shoppingListSession.preferences.property;
-	var autoUseStock = (A && !B && B != null);
+	let A = shoppingListSession.bools.enableStock;
+	let B = shoppingListSession.bools.customizeStock;
+	let C = shoppingListSession.bools.enablePantryItems;
+	let D = shoppingListSession.bools.customizePantryItems;
+	let store = shoppingListSession.preferences.store;
+	let lowOrHigh = shoppingListSession.preferences.lowOrHigh;
+	let property = shoppingListSession.preferences.property;
+	let autoUseStock = (A && !B && B != null);
 	
 	eraseShoppingListDiv();    
 	
 	//No scheduled recipes
 	if (sessionData.scheduledIngredients.length <= 0)
 	{
-		var mainDiv = document.createElement('div');
+		let mainDiv = document.createElement('div');
 		mainDiv.classList.add('ingDiv');
 		mainDiv.style.display = 'flex';
 		mainDiv.justifyContent = 'space-between';
@@ -81,39 +81,75 @@ function regenShoppingList()
 	sessionData.scheduledIngredients.forEach(function(curIngredient){
 		
 		//set the item that will be placed on list as the current ingredient by default
-		var item = curIngredient;
+		let item = curIngredient;
 		
 		//fill arrays with relevant pantry items
-		var relevantPantryItems = [];
-		var relevantPantryItemsInStock = [];
-		var relevantPantryItemsOutOfStock = [];
-		localData.pantryItemList.forEach(function(curPantryItem){
-			
-			if (item.name == curPantryItem.correspondingIngredient)
-			{
-				relevantPantryItems.push(curPantryItem);
-				if(curPantryItem.amountInPantry > 0)
-					relevantPantryItemsInStock.push(curPantryItem);
-				else
-					relevantPantryItemsOutOfStock.push(curPantryItem);
-				
-			}
-		});
+		let relevantPantryItems = [];
+		let relevantPantryItemsInStock = [];
+		let relevantPantryItemsOutOfStock = [];
+
+        // temp rewrite code
+        if((!localData.pantryItemList.noBarcode) || (!localData.pantryItemList.barcode)) {
+            if (!localData.pantryItemList.noBarcode) {
+                localData.pantryItemList.noBarcode = {};
+                for (item in localData.pantryItemList) {
+                    if (parseFloat(item) < 1000) {
+                        localData.pantryItemList.noBarcode[item] = localData.pantryItemList[item];
+                        delete localData.pantryItemList[item];
+                    }
+                }
+
+            }
+            if (!localData.pantryItemList.barcode) {
+                localData.pantryItemList.barcode = {};
+                for (item in localData.pantryItemList) {
+                    if (parseFloat(item) >= 1000) {
+                        localData.pantryItemList.barcode[item] = localData.pantryItemList[item];
+                        delete localData.pantryItemList[item];
+                    }
+                }
+            }
+
+            //save database
+            updateData();
+        }
+
+        let list = [];
+        for (it in localData.pantryItemList.noBarcode){
+            list.push(localData.pantryItemList.noBarcode[it]);
+        }
+        for (it in localData.pantryItemList.barcode){
+            list.push(localData.pantryItemList.barcode[it])
+        }
+
+
+		for (i in list){
+			let curPantryItem = list[i];
+            if (item.name == curPantryItem.correspondingIngredient)
+            {
+                relevantPantryItems.push(curPantryItem);
+                if(curPantryItem.amountInPantry > 0)
+                    relevantPantryItemsInStock.push(curPantryItem);
+                else
+                    relevantPantryItemsOutOfStock.push(curPantryItem);
+
+            }
+		}
 	
 		//adjust for stock automatically
 		if (autoUseStock)
 		{
-			var currentNeed = item.need;
+			let currentNeed = item.need;
 			relevantPantryItemsInStock.forEach(function(inStockItem){
 				
 				//only continue subtracting if there is a need
 				if(currentNeed > 0)
 				{
 					//subtract adjusted inStockItem amount from ing need
-					var convertedInStockItemAmount = convertUnits(parseFloat(inStockItem.amount), inStockItem.unit, item.unit);
+					let convertedInStockItemAmount = convertUnits(parseFloat(inStockItem.amount), inStockItem.unit, item.unit);
 					currentNeed -= convertedInStockItemAmount;
 				}					
-			})
+			});
 			item.need = currentNeed;
 			
 			//if the need has been fulfilled for this ingredient with the stock, then do nothing more
@@ -128,13 +164,13 @@ function regenShoppingList()
 		
 		
 		//createDiv that will hold that items information on the shopping list
-		var mainDiv = document.createElement('div');
+		let mainDiv = document.createElement('div');
 		mainDiv.classList.add('ingDiv');
 		mainDiv.style.display = 'flex';
 		mainDiv.justifyContent = 'space-between';
 		
 		//createDeleteBtn
-		var deleteBtn = document.createElement('span');
+		let deleteBtn = document.createElement('span');
 		deleteBtn.classList.add('listItemDelete');
 		
 		mainDiv.appendChild(deleteBtn);
@@ -143,10 +179,10 @@ function regenShoppingList()
 		if (!B && !C)
 		{
 			//for ready list
-			var readyListItem = new ReadyListItem(item.name, item.amount, item.unit);
+			let readyListItem = new ReadyListItem(item.name, item.amount, item.unit);
 			readyList.push(readyListItem);
 			
-			var onlyIng = createIngPlaceholder(item);
+			let onlyIng = createIngPlaceholder(item);
 		    mainDiv.appendChild(onlyIng);
 			document.getElementById('shoppingListTarget').appendChild(mainDiv);
 			return;
@@ -158,12 +194,12 @@ function regenShoppingList()
 			if (relevantPantryItems.length > 0)
 			{
 				//find best item based on preferences
-				var bestItem = findBestItem(relevantPantryItems);
+				let bestItem = findBestItem(relevantPantryItems);
 				
 				//ONCE AN ITEM IS CHOSEN
 				//find out how many units of the item will be needed
 				//this will require reconciliation of units 
-				var itemAmountNeeded = 1;
+				let itemAmountNeeded = 1;
 				try {
 					itemAmountNeeded = tryConvertingUnits(bestItem, item);
 				}
@@ -174,10 +210,10 @@ function regenShoppingList()
 				}
 				
 				//fill div with quantity and item name
-				var listItem = createListItem(bestItem, itemAmountNeeded);
+				let listItem = createListItem(bestItem, itemAmountNeeded);
 				
 				// for ready list
-				var readyListItem = new ReadyListItem(bestItem.name, itemAmountNeeded, "");
+				let readyListItem = new ReadyListItem(bestItem.name, itemAmountNeeded, "");
 				readyList.push(readyListItem);
 				
 				mainDiv.appendChild(listItem);
@@ -186,10 +222,10 @@ function regenShoppingList()
 			}
 			else
 			{
-				var onlyIng = createIngPlaceholder(item);
+				let onlyIng = createIngPlaceholder(item);
 				
 				//for ready list
-				var readyListItem = new ReadyListItem(item.name, item.amount, item.unit);
+				let readyListItem = new ReadyListItem(item.name, item.amount, item.unit);
 				readyList.push(readyListItem);
 				
 				mainDiv.appendChild(onlyIng);
@@ -198,14 +234,14 @@ function regenShoppingList()
 			}
 		}
 		
-		var chooseItemFlag = (C && D);
-		var customStockFlag = (A && B);
+		let chooseItemFlag = (C && D);
+		let customStockFlag = (A && B);
 		
 		//scenarios 3, 6, 7, 8, & 9
 		if (chooseItemFlag || customStockFlag)
 		{
-			var tempCustomStockFlag = false;
-			var tempChooseItemFlag = false;
+			let tempCustomStockFlag = false;
+			let tempChooseItemFlag = false;
 			
 			if (relevantPantryItemsInStock.length > 0 && customStockFlag)
 				tempCustomStockFlag = true;
@@ -214,12 +250,12 @@ function regenShoppingList()
 			
 			if (tempCustomStockFlag || tempChooseItemFlag)
 			{
-				var ingBlock = createIngBlock(item, tempChooseItemFlag, tempCustomStockFlag, relevantPantryItems);
+				let ingBlock = createIngBlock(item, tempChooseItemFlag, tempCustomStockFlag, relevantPantryItems);
 
 				mainDiv.appendChild(ingBlock);
 				
 				//createDeleteBtn
-				var processBtn = document.createElement('span');
+				let processBtn = document.createElement('span');
 				processBtn.classList.add('ingBlockProcess');
 				processBtn.addEventListener("click", function(){
 					ingBlockProcess(item, mainDiv, relevantPantryItems);
@@ -233,10 +269,10 @@ function regenShoppingList()
 			else
 			{
 				//for ready list
-				var readyListItem = new ReadyListItem(item.name, item.amount);
+				let readyListItem = new ReadyListItem(item.name, item.amount);
 				readyList.push(readyListItem);
 				
-				var onlyIng = createIngPlaceholder(item);
+				let onlyIng = createIngPlaceholder(item);
 				mainDiv.appendChild(onlyIng);
 				document.getElementById('shoppingListTarget').appendChild(mainDiv);
 				return;
@@ -249,30 +285,30 @@ function regenShoppingList()
 
 function findBestItem(relevantPantryItems)
 {
-	var low;
+	let low;
 	if (shoppingListSession.preferences.lowOrHigh == 'low')
 		low = true;
 	else 
 		low = false;
 	
-	var prop = shoppingListSession.preferences.property;
-	var bestItem = findLowOrHighProperty(relevantPantryItems, prop, low)
+	let prop = shoppingListSession.preferences.property;
+	let bestItem = findLowOrHighProperty(relevantPantryItems, prop, low)
 
 	return bestItem;
 }
 
 function createIngPlaceholder(item)
 {
-	var ingPlaceholder = document.createElement('span');
+	let ingPlaceholder = document.createElement('span');
 	
 	//setup usable unit
-	var usableUnit;
+	let usableUnit;
 	if (item.unit != '-none-')
 		usableUnit = item.unit;
 	else
 		usableUnit = '';
 	
-	var needHTML;
+	let needHTML;
 	if (item.need > 1 && item.unit != '-none-')
 		needHTML = "s needed)";
 	else
@@ -290,29 +326,29 @@ function createIngBlock(item, chooseItemFlag, customStockFlag, relevantPantryIte
 	ready = false;
 	notReadyCount++;
 	
-	var ingBlock = document.createElement('div');
+	let ingBlock = document.createElement('div');
 	ingBlock.classList.add('ingBlock');
 	
 	//make ing name column
-	var nameColumn = document.createElement('div');
+	let nameColumn = document.createElement('div');
 	nameColumn.classList.add('column');
 	nameColumn.classList.add('nameColumn');
 	nameColumn.innerHTML = item.name;
 	ingBlock.appendChild(nameColumn);
 	
 	//make ing need column
-	var needColumn = document.createElement('div');
+	let needColumn = document.createElement('div');
 	needColumn.classList.add('column');
 	needColumn.classList.add('needColumn');
 	function updateNeed(need){
 		//setup usable unit
-		var usableUnit;
+		let usableUnit;
 		if (item.unit != '-none-')
 			usableUnit = item.unit;
 		else
 			usableUnit = '';
 		
-		var needHTML;
+		let needHTML;
 		if (item.amount > 1 && item.unit != '-none-')
 			needHTML = "s needed";
 		else
@@ -324,32 +360,32 @@ function createIngBlock(item, chooseItemFlag, customStockFlag, relevantPantryIte
 	ingBlock.appendChild(needColumn);
 
 	//make edit column
-	var editColumn = document.createElement('div');
+	let editColumn = document.createElement('div');
 	editColumn.classList.add('column');
 	editColumn.classList.add('editColumn');
 	
 	if (customStockFlag)
 	{
 		//give directions
-		var title = document.createElement('h4');
+		let title = document.createElement('h4');
 		title.innerHTML = "Select in stock items from your pantry to satisfy the ingredient need";
 		editColumn.appendChild(title);
 		
 		//make choose stock items form
-		var stockItemsSelect = document.createElement('select');
+		let stockItemsSelect = document.createElement('select');
 		stockItemsSelect.setAttribute("multiple", true);
 		stockItemsSelect.setAttribute("size", 4);
 		relevantPantryItems.forEach(function(pantryItem){
 			if(pantryItem.amountInPantry > 0)
 			{
-				var option = document.createElement('option');
+				let option = document.createElement('option');
 				option.setAttribute("value", "none");
 				option.innerHTML = "none";
 				stockItemsSelect.appendChild(option);
 				
-				for(var i = 0; i < pantryItem.amountInPantry; i++)
+				for(let i = 0; i < pantryItem.amountInPantry; i++)
 				{
-					var option = document.createElement('option');
+					let option = document.createElement('option');
 					option.setAttribute("value", pantryItem.name);
 					option.innerHTML = pantryItem.name;
 					option.dataset.pantryItem = JSON.stringify(pantryItem);
@@ -365,13 +401,13 @@ function createIngBlock(item, chooseItemFlag, customStockFlag, relevantPantryIte
 			else
 				item.storedNeed = item.need;
 			
-			var children = this.children;
+			let children = this.children;
 			
 			for (option in children){
 				if (children[option].dataset && children[option].selected && children[option].value != "none")
 				{
-					var pantryItem = JSON.parse(children[option].dataset.pantryItem);
-					var convertedInStockItemAmount = convertUnits(parseFloat(pantryItem.amount), pantryItem.unit, item.unit);
+					let pantryItem = JSON.parse(children[option].dataset.pantryItem);
+					let convertedInStockItemAmount = convertUnits(parseFloat(pantryItem.amount), pantryItem.unit, item.unit);
 					item.need -= convertedInStockItemAmount;
 					if (item.need < 0)
 						item.need = 0;
@@ -391,14 +427,14 @@ function createIngBlock(item, chooseItemFlag, customStockFlag, relevantPantryIte
 		editColumn.appendChild(stockItemsSelect);
 
 		//give directions
-		var span = document.createElement('span');
+		let span = document.createElement('span');
 		span.innerHTML = "<br />Use ctrl to select multiple";
 		span.style.fontStyle = 'italic';
 		editColumn.appendChild(span);
 	}
 	
 	//make choose items display
-	var stagedItemsDiv = document.createElement('div');
+	let stagedItemsDiv = document.createElement('div');
 	editColumn.appendChild(stagedItemsDiv);
 		
 	//add any staged ingredients
@@ -406,23 +442,23 @@ function createIngBlock(item, chooseItemFlag, customStockFlag, relevantPantryIte
 	{
 		item.stagedPantryItems.forEach(function(stagedPantryItem){
 			
-			var itemDiv = document.createElement('div');
+			let itemDiv = document.createElement('div');
 			itemDiv.classList.add('ingDiv');
 			itemDiv.style.display = 'flex';
 			itemDiv.justifyContent = 'space-between';							
 			itemDiv.dataset.pantryItem = JSON.stringify(stagedPantryItem);
 			
 			//make a button to remove the item
-			var removeBtn = document.createElement('span');
+			let removeBtn = document.createElement('span');
 			removeBtn.classList.add('stagedItemRemove');
 			removeBtn.addEventListener('click', function(){
 				
 				//remove the item from the stagedItems array in the data
-				var thisItemDiv = this.parentElement;
-				var pantryItemJSON = thisItemDiv.dataset.pantryItem;
+				let thisItemDiv = this.parentElement;
+				let pantryItemJSON = thisItemDiv.dataset.pantryItem;
 				
-				var indexFound = false;
-				var lastFoundIndex;
+				let indexFound = false;
+				let lastFoundIndex;
 				item.stagedPantryItems.forEach(function(curVal, ind, arr){
 					if (pantryItemJSON == JSON.stringify(curVal))
 					{
@@ -437,13 +473,13 @@ function createIngBlock(item, chooseItemFlag, customStockFlag, relevantPantryIte
 				}
 				
 				//check the item quantity of the item being removed
-				var stagedItems = stagedItemsDiv.children;
+				let stagedItems = stagedItemsDiv.children;
 				for (it in stagedItems)
 				{
 					try {
 						if (stagedItems[it].dataset.pantryItem == JSON.stringify(pantryItemJSON))
 						{
-							var quantityDisplay = stagedItems[it].getElementsByClassName('quantityDisplayStagedItem')[0];
+							let quantityDisplay = stagedItems[it].getElementsByClassName('quantityDisplayStagedItem')[0];
 							
 							//if it quantity is one before removing, remove the item completely
 							if (parseFloat(quantityDisplay.value) - 1 <= 0)
@@ -464,12 +500,12 @@ function createIngBlock(item, chooseItemFlag, customStockFlag, relevantPantryIte
 					}
 				}
 			})
-			var quantityDisplay = document.createElement('span');
+			let quantityDisplay = document.createElement('span');
 			quantityDisplay.classList.add('quantityDisplayStagedItem');
 			quantityDisplay.value = 0;
 			quantityDisplay.dataset.quantity = 0;
 			
-			var itemNameSpan = document.createElement('span')
+			let itemNameSpan = document.createElement('span')
 			itemNameSpan.innerHTML = stagedPantryItem.name;
 			
 			itemDiv.appendChild(removeBtn);
@@ -487,12 +523,12 @@ function createIngBlock(item, chooseItemFlag, customStockFlag, relevantPantryIte
 			item.storedNeed = item.need;
 		
 		//make choose items form
-		var chooseItemForm = document.createElement('div');
+		let chooseItemForm = document.createElement('div');
 			
 			//make choose items input
-			var chooseItemSelect = document.createElement('select');
+			let chooseItemSelect = document.createElement('select');
 			relevantPantryItems.forEach(function(pantryItem){
-				var option = document.createElement('option');
+				let option = document.createElement('option');
 				option.setAttribute("value", pantryItem.name);
 				option.innerHTML = pantryItem.name;
 				option.dataset.pantryItem = JSON.stringify(pantryItem);
@@ -504,20 +540,20 @@ function createIngBlock(item, chooseItemFlag, customStockFlag, relevantPantryIte
 			chooseItemForm.appendChild(chooseItemSelect);
 			
 			//make choose items button
-			var addItemButton = document.createElement('input');
+			let addItemButton = document.createElement('input');
 			addItemButton.setAttribute("type", "button");
 			addItemButton.value = "Add";
 			addItemButton.addEventListener("click", function(event){
 				
-				var children = chooseItemSelect.children;
+				let children = chooseItemSelect.children;
 				for (option in children)
 				{
 					if (children[option].selected)
 					{
-						var pantryItem = JSON.parse(children[option].dataset.pantryItem);
+						let pantryItem = JSON.parse(children[option].dataset.pantryItem);
 					
 						//update ingredient need
-						var convertedInStockItemAmount = convertUnits(parseFloat(pantryItem.amount), pantryItem.unit, item.unit);
+						let convertedInStockItemAmount = convertUnits(parseFloat(pantryItem.amount), pantryItem.unit, item.unit);
 						item.need -= convertedInStockItemAmount;
 						if (item.need < 0)
 							item.need = 0;
@@ -529,15 +565,15 @@ function createIngBlock(item, chooseItemFlag, customStockFlag, relevantPantryIte
 						item.stagedPantryItems.push(pantryItem);
 						
 						//find out if item is already in the staged list
-						var alreadyInList = false;
-						var stagedItems = stagedItemsDiv.children;
+						let alreadyInList = false;
+						let stagedItems = stagedItemsDiv.children;
 						for (it in stagedItems)
 						{
 							try {
 								if (stagedItems[it].dataset.pantryItem == JSON.stringify(pantryItem))
 								{
 									alreadyInList = true;
-									var quantityDisplay = stagedItems[it].getElementsByClassName('quantityDisplayStagedItem')[0];
+									let quantityDisplay = stagedItems[it].getElementsByClassName('quantityDisplayStagedItem')[0];
 									quantityDisplay.value = parseFloat(quantityDisplay.value) + 1;
 									quantityDisplay.dataset.quantity = quantityDisplay.value;
 									quantityDisplay.innerHTML = quantityDisplay.value;
@@ -552,22 +588,22 @@ function createIngBlock(item, chooseItemFlag, customStockFlag, relevantPantryIte
 						//if not, add staged item to list
 						if (!alreadyInList)
 						{
-							var itemDiv = document.createElement('div');
+							let itemDiv = document.createElement('div');
 							itemDiv.classList.add('ingDiv');
 							itemDiv.style.display = 'flex';
 							itemDiv.justifyContent = 'space-between';							
 							itemDiv.dataset.pantryItem = children[option].dataset.pantryItem;
 							
 							//make a button to remove the item
-							var removeBtn = document.createElement('span');
+							let removeBtn = document.createElement('span');
 							removeBtn.classList.add('stagedItemRemove');
 							removeBtn.addEventListener('click', function(){
 								//remove the item from the stagedItems array in the data
-								var thisItemDiv = this.parentElement;
-								var pantryItemString = thisItemDiv.dataset.pantryItem;
-								var pantryItemObj = JSON.parse(pantryItemString);
+								let thisItemDiv = this.parentElement;
+								let pantryItemString = thisItemDiv.dataset.pantryItem;
+								let pantryItemObj = JSON.parse(pantryItemString);
 								
-								var convertedInStockItemAmount = convertUnits(parseFloat(pantryItem.amount), pantryItem.unit, item.unit);
+								let convertedInStockItemAmount = convertUnits(parseFloat(pantryItem.amount), pantryItem.unit, item.unit);
 								item.need += convertedInStockItemAmount;
 								if (item.need < 0)
 									item.need = 0;
@@ -575,8 +611,8 @@ function createIngBlock(item, chooseItemFlag, customStockFlag, relevantPantryIte
 									item.need = item.storedNeed;
 								updateNeed(item.need);
 								
-								var indexFound = false;
-								var lastFoundIndex;
+								let indexFound = false;
+								let lastFoundIndex;
 								item.stagedPantryItems.forEach(function(curVal, ind, arr){
 									if (pantryItemString == JSON.stringify(curVal))
 									{
@@ -591,13 +627,13 @@ function createIngBlock(item, chooseItemFlag, customStockFlag, relevantPantryIte
 								}
 								
 								//check the item quantity of the item being removed
-								var stagedItems = stagedItemsDiv.children;
+								let stagedItems = stagedItemsDiv.children;
 								for (it in stagedItems)
 								{
 									try {
 										if (stagedItems[it].dataset.pantryItem == pantryItemString)
 										{
-											var quantityDisplay = stagedItems[it].getElementsByClassName('quantityDisplayStagedItem')[0];
+											let quantityDisplay = stagedItems[it].getElementsByClassName('quantityDisplayStagedItem')[0];
 											
 											//if it is greater than one, lower the quantity one
 											if (parseFloat(quantityDisplay.value) - 1 <= 0)
@@ -620,12 +656,12 @@ function createIngBlock(item, chooseItemFlag, customStockFlag, relevantPantryIte
 								updateListInfo();
 							})
 							
-							var quantityDisplay = document.createElement('span');
+							let quantityDisplay = document.createElement('span');
 							quantityDisplay.classList.add('quantityDisplayStagedItem');
 							quantityDisplay.value = 1;
 							quantityDisplay.dataset.quantity = 1;
 							
-							var itemNameSpan = document.createElement('span')
+							let itemNameSpan = document.createElement('span')
 							itemNameSpan.innerHTML = pantryItem.name;
 							
 							itemDiv.appendChild(removeBtn);
@@ -648,18 +684,18 @@ function createIngBlock(item, chooseItemFlag, customStockFlag, relevantPantryIte
 
 function ingBlockProcess(item, mainDiv, relevantPantryItems)
 {
-	var nodes = mainDiv.parentNode.childNodes, node;
-	var i = count = 0;
+	let nodes = mainDiv.parentNode.childNodes, node;
+	let i = count = 0;
 	while ( (node = nodes.item(i++)) && node != mainDiv)
 	{
 		//if (node.nodeType == 1) 
 			count++;
 	}
 	
-	var container = mainDiv.parentNode;
+	let container = mainDiv.parentNode;
 	
 	//make a manageable array for adding all the staged pantry items
-	var pantryItemsAndQuantitys = [];
+	let pantryItemsAndQuantitys = [];
 	if (!item.stagedPantryItems)
 		item.stagedPantryItems = [];
 	item.stagedPantryItems.forEach(function(pantryItem){
@@ -667,7 +703,7 @@ function ingBlockProcess(item, mainDiv, relevantPantryItems)
 
 		
 		//make sure the pantryItem is the first of its kind
-		var isFirst = true;
+		let isFirst = true;
 		pantryItemsAndQuantitys.forEach(function(obj){
 			if (JSON.stringify(obj.item) == JSON.stringify(pantryItem))
 				isFirst = false;
@@ -676,14 +712,14 @@ function ingBlockProcess(item, mainDiv, relevantPantryItems)
 		if (isFirst)
 		{
 			//find out how many duplicates there are
-			var count = 0;
+			let count = 0;
 			item.stagedPantryItems.forEach(function(innerItem){
 				if (JSON.stringify(pantryItem) == JSON.stringify(innerItem))
 					count++;
 			})
 			
 			//make a dummy object used to consolidate the duplicates
-			var oneItemAndQuantity = {
+			let oneItemAndQuantity = {
 				'item': pantryItem,
 				'quantity': count
 			}
@@ -696,17 +732,17 @@ function ingBlockProcess(item, mainDiv, relevantPantryItems)
 	//add staged pantry items to shopping list
 	pantryItemsAndQuantitys.forEach(function(obj){
 		//createDiv that will hold that items information on the shopping list
-		var newMainDiv = document.createElement('div');
+		let newMainDiv = document.createElement('div');
 		newMainDiv.classList.add('ingDiv');
 		newMainDiv.style.display = 'flex';
 		newMainDiv.justifyContent = 'space-between';
 		
 		//createDeleteBtn
-		var deleteBtn = document.createElement('span');
+		let deleteBtn = document.createElement('span');
 		deleteBtn.classList.add('listItemDelete');
 		
 		//create listItem
-		var listItem = createListItem(obj.item, obj.quantity);
+		let listItem = createListItem(obj.item, obj.quantity);
 		
 		newMainDiv.appendChild(deleteBtn);
 		newMainDiv.appendChild(listItem);
@@ -714,23 +750,23 @@ function ingBlockProcess(item, mainDiv, relevantPantryItems)
 		container.insertBefore(newMainDiv, mainDiv);
 	})
 	
-	var C = shoppingListSession.bools.enablePantryItems;
-	var D = shoppingListSession.bools.customizePantryItems;
+	let C = shoppingListSession.bools.enablePantryItems;
+	let D = shoppingListSession.bools.customizePantryItems;
 	
 	//make placeholder for remaining need
 	if (item.need > 0 && (!C || C && D)){
 		
 		//createDiv that will hold that items information on the shopping list
-		var newMainDiv = document.createElement('div');
+		let newMainDiv = document.createElement('div');
 		newMainDiv.classList.add('ingDiv');
 		newMainDiv.style.display = 'flex';
 		newMainDiv.justifyContent = 'space-between';
 		
 		//createDeleteBtn
-		var deleteBtn = document.createElement('span');
+		let deleteBtn = document.createElement('span');
 		deleteBtn.classList.add('listItemDelete');
 		
-		var placeholder = createIngPlaceholder(item);
+		let placeholder = createIngPlaceholder(item);
 		
 		newMainDiv.appendChild(deleteBtn);
 		newMainDiv.appendChild(placeholder);
@@ -742,24 +778,24 @@ function ingBlockProcess(item, mainDiv, relevantPantryItems)
 	else if (item.need > 0)
 	{
 		//createDiv that will hold that items information on the shopping list
-		var newMainDiv = document.createElement('div');
+		let newMainDiv = document.createElement('div');
 		newMainDiv.classList.add('ingDiv');
 		newMainDiv.style.display = 'flex';
 		newMainDiv.justifyContent = 'space-between';
 		
 		//createDeleteBtn
-		var deleteBtn = document.createElement('span');
+		let deleteBtn = document.createElement('span');
 		deleteBtn.classList.add('listItemDelete');
 		
 		if (relevantPantryItems.length > 0)
 		{
 			//find best item based on preferences
-			var bestItem = findBestItem(relevantPantryItems);
+			let bestItem = findBestItem(relevantPantryItems);
 			
 			//ONCE AN ITEM IS CHOSEN
 			//find out how many units of the item will be needed
 			//this will require reconciliation of units 
-			var itemAmountNeeded = 1;
+			let itemAmountNeeded = 1;
 			try {
 				itemAmountNeeded = tryConvertingUnits(bestItem, item);
 			}
@@ -770,7 +806,7 @@ function ingBlockProcess(item, mainDiv, relevantPantryItems)
 			}
 			
 			//fill div with quantity and item name
-			var listItem = createListItem(bestItem, itemAmountNeeded);
+			let listItem = createListItem(bestItem, itemAmountNeeded);
 			
 			newMainDiv.appendChild(deleteBtn);
 			newMainDiv.appendChild(listItem);
@@ -778,7 +814,7 @@ function ingBlockProcess(item, mainDiv, relevantPantryItems)
 		}
 		else
 		{
-			var onlyIng = createIngPlaceholder(item);
+			let onlyIng = createIngPlaceholder(item);
 			newMainDiv.appendChild(onlyIng);
 		}
 		container.insertBefore(newMainDiv, mainDiv);
@@ -800,10 +836,10 @@ function ingBlockProcess(item, mainDiv, relevantPantryItems)
 
 function createListItem(pantryItem, quantity)
 {
-	var listItem = document.createElement('div');
+	let listItem = document.createElement('div');
 	listItem.innerHTML = quantity + " " + pantryItem.name;
 	
-	for (var i = 0; i < quantity; i++)
+	for (let i = 0; i < quantity; i++)
 	{
 		shoppingListSession.actualItemsOnList.push(pantryItem);
 	}
@@ -813,7 +849,7 @@ function createListItem(pantryItem, quantity)
 
 function storeBools()
 {
-	var d = shoppingListSession.bools;
+	let d = shoppingListSession.bools;
 	
 	//get preferences
 	d.enableStock = document.querySelector("input[name=enableStock]").checked;
@@ -839,237 +875,22 @@ function storeBools()
 function eraseShoppingListDiv()
 {
 	//wipe shoppingList div clean
-	var node = document.getElementById('shoppingListTarget');
+	let node = document.getElementById('shoppingListTarget');
 	while (node.firstChild)
 	{
 		node.removeChild(node.firstChild);
 	}	
 }
-/*
-function updateIngredientBlock(ingredient)
-{
-	
-	//fill arrays with relevant pantry items
-	var relevantPantryItems = [];
-	var relevantPantryItemsInStock = [];
-	
-	//check if there is a item for that ingredient in pantry database
-	localData.pantryItemList.forEach(function(curPantryItem){
-		
-		if (curIngredient.name == curPantryItem.correspondingIngredient)
-		{
-			if(curPantryItem.amountInPantry > 0)
-				relevantPantryItemsInStock.push(curPantryItem);
-			else
-				relevantPantryItems.push(curPantryItem);
-		}
-	});
-	
-	//set the item that will be placed on list as the current ingredient by default
-	var item = curIngredient;
-	
-	//createDiv that will hold that items information on the shopping list
-	var ingDiv = document.createElement('div');
-	ingDiv.classList.add('ingDiv');
-	ingDiv.style.display = 'flex';
-	ingDiv.justifyContent = 'space-between';
-	
-		//createMain (information relevant to every item)
-		var main = document.createElement('span');
-		
-		//setup usable unit
-		var usableUnit;
-		if (item.unit != '-none-')
-			usableUnit = item.unit;
-		else
-			usableUnit = '';
-		
-		var needHTML;
-		if (item.amount > 1 && item.unit != '-none-')
-			needHTML = "s needed)";
-		else
-			needHTML = " needed)";
-		
-		main.innerHTML = item.name +                       //item name
-		" (" + item.amount +                               //the amount needed
-		" " + usableUnit + needHTML;                      //the units used in the recipes
-		ingDiv.appendChild(main);	
-	
-		//handle ingredient if it has an item in stock
-		if(relevantPantryItemsInStock.length > 0) 
-		{
-			
-			
-			
-			
-			//item is the pantry item that will be used to fill the shopping list's requirement
-			//default to first item
-			var item = relevantPantryItemsInStock[0];    
-			
-			//create select multiple list of items in stock
-			//on select of each item, update pantry need
-				//in ingredient
-				//in shopping list object in data
-				
-			//if need is fulfilled, remove out of stock select
-			relevantPantryItemsInStock.forEach(function(){
-				//make use or dismiss block for pantry item in stock
-				
-				
-			});
-			
-			//create select multip list of relevant pantry items 
-			//these selected items will show up on final list
-			//possible only show this section if an ingredient need remains
-			relevantPantryItems.forEach(function(){
-				//
-				
-			})
-			
-			
-			
-			
-			//if more than one, decide which item would be best to use from Pantry.
-			//by default, item with higher amountInPantry is set to item
-			if(relevantPantryItemsInStock.length > 1)
-			{
-				relevantPantryItemsInStock.forEach(function(curPantryItem){
-					if(item.amountInPantry < curPantryItem.amountInPantry)
-						item = curPantryItem;
-				})
-			}	
-			
-			//ONCE AN ITEM IS CHOSEN
-			//find out how many units of the item will be needed
-				//this will require reconciliation of units 
-			var itemAmountNeeded = 1;
-			try {
-				itemAmountNeeded = tryConvertingUnits(item, curIngredient);
-			}
-			catch (e)
-			{
-				//TODO something if the conversion failed
-				itemAmountNeeded = '?';
-			}
-
-			
-			//create inStock
-			var inStock = document.createElement('span');
-			
-			//setup usable unit
-			var usableUnit;
-			if (item.unit != '-none-')
-				usableUnit = item.unit;
-			else
-				usableUnit = '';
-			
-			inStock.innerHTML = itemAmountNeeded + 
-			" " + item.name + 
-			" (" + item.amount +
-			" " + item.unit + ")";
-			
-			//createDetails
-			var details = document.createElement('span');
-			details.innerHTML = item.amountInPantry + " unit(s) In Pantry";
-			
-			//subtract Button
-			var subtractBtn = document.createElement('input');
-			subtractBtn.classList.add('subtractBtn');
-			subtractBtn.setAttribute('type', 'button');
-			subtractBtn.setAttribute('value', 'Use Item');
-			subtractBtn.addEventListener('click', function(){
-				//TODO
-				//resolve differences in units
-				//subtract the amount out of the scheduled ingredients list
-				//subtract the amountInPantry used from amountInPantry for the item
-			})
-			
-			var dismissBtn = document.createElement('input');
-			dismissBtn.classList.add('dismissBtn');
-			dismissBtn.setAttribute('type', 'button');
-			dismissBtn.setAttribute('value', 'Dismiss Suggestion');
-			dismissBtn.addEventListener('click', function(){
-				//TODO
-				//treat item like there is no corresponding item in pantry
-			})
-			ingDiv.appendChild(inStock);
-			ingDiv.appendChild(details);
-			//ingDiv.appendChild(subtractBtn);
-			//ingDiv.appendChild(dismissBtn);
-		}
-	
-		//handle ingredient if there is an item that is not in stock for it
-		else if(relevantPantryItems.length > 0)
-		{
-			//TODO
-			//if more than one, decide which item would be best to buy
-				//depending on
-					//store
-					//price
-					//quantity needed
-					
-			//item is the pantry item that will be used to fill the shopping list's requirement
-			//default to first found item in pantry that will fit the bill
-			var item = relevantPantryItems[0];    
-			
-			//if more than one, decide which item would be best to use from Pantry.
-			//by default, item with higher amountInPantry is set to item
-			if(relevantPantryItems.length > 1)
-			{
-				relevantPantryItems.forEach(function(curPantryItem){
-					if(item.amountInPantry < curPantryItem.amountInPantry)
-						item = curPantryItem;
-				})
-			}	
-			
-			//ONCE AN ITEM IS CHOSEN
-			//find out how many units of the item will be needed
-				//this will require reconciliation of units 
-			var itemAmountNeeded = 1;
-			try {
-				itemAmountNeeded = tryConvertingUnits(item, curIngredient);
-			}
-			catch (e)
-			{
-				//TODO something if the conversion failed
-				itemAmountNeeded = '?';
-			}
-			
-			var outStock = document.createElement('span');
-			
-			//setup usable unit
-			var usableUnit;
-			if (item.unit != '-none-')
-				usableUnit = item.unit;
-			else
-				usableUnit = '';
-			
-			outStock.innerHTML = itemAmountNeeded +
-			" " + item.name +
-			" (" + item.amount + 
-			" " + item.unit + ")";
-			
-			var details = document.createElement('span');
-			details.innerHTML = item.amountInPantry + " unit(s) In Pantry";
-			
-			ingDiv.appendChild(outStock);
-			ingDiv.appendChild(details);
-			
-		}
-	node.appendChild(ingDiv);
-}
-*/
-
 
 function tryConvertingUnits(pantryItem, ingredient)
 {
-	var itemAmountNeeded = 1;
+	let itemAmountNeeded = 1;
 
-	var ingredientAmountNeeded = parseFloat(ingredient.amount);
-	var quantityInOneItemUsingItemUnit = parseFloat(pantryItem.amount);
+	let ingredientAmountNeeded = parseFloat(ingredient.amount);
+	let quantityInOneItemUsingItemUnit = parseFloat(pantryItem.amount);
 
 	//reconcile unit discrepancy
-	var quantityInOneItemUsingListUnit = convertUnits(quantityInOneItemUsingItemUnit, pantryItem.unit, ingredient.unit); 
+	let quantityInOneItemUsingListUnit = convertUnits(quantityInOneItemUsingItemUnit, pantryItem.unit, ingredient.unit); 
     if (quantityInOneItemUsingListUnit == false)
 		return false;
 	
@@ -1092,7 +913,7 @@ document.getElementById('clearShoppingList').addEventListener('click', function(
 })
 
 document.getElementById('saveShoppingList').addEventListener('click', function(){
-	var name;
+	let name;
 	try
 	{
 		//get name
@@ -1105,14 +926,14 @@ document.getElementById('saveShoppingList').addEventListener('click', function()
 			if(obj && obj.name)
 				return obj.name == name;
 		}
-		var ind = localData.savedShoppingLists.findIndex(findSameName);
+		let ind = localData.savedShoppingLists.findIndex(findSameName);
 		
 		//passed validation
 		document.getElementById('saveShoppingListMsg').innerHTML = 'Saved ' + name;
 		document.getElementById('shoppingListName').value = '';
 		
 		//make list
-		var newList = {
+		let newList = {
 			'name': name,
 			'scheduledRecipes': sessionData.scheduledRecipes,
 			'scheduledIngredients': sessionData.scheduledIngredients
@@ -1140,7 +961,7 @@ document.getElementById('saveShoppingList').addEventListener('click', function()
 function updateLoadList(){
 	
 	//wipe shoppingList div clean
-	var node = document.getElementById('savedShoppingLists');
+	let node = document.getElementById('savedShoppingLists');
 	while (node.firstChild)
 	{
 		node.removeChild(node.firstChild);
@@ -1148,10 +969,10 @@ function updateLoadList(){
 	
 	localData.savedShoppingLists.forEach(function(curList, ind){
 		
-        var div = document.createElement('div');
+        let div = document.createElement('div');
 		div.classList.add('savedList');
 
-			var loadBtn = document.createElement('input');
+			let loadBtn = document.createElement('input');
 			loadBtn.value = "Load";
 			loadBtn.setAttribute('type', 'button');
 			loadBtn.classList.add('shoppingListBtn');
@@ -1164,12 +985,12 @@ function updateLoadList(){
 			});
 			div.appendChild(loadBtn);
 		
-			var name = document.createElement('span');
+			let name = document.createElement('span');
 			name.innerHTML = curList.name;
 			name.style.fontSize = '1.5em';
 			div.appendChild(name);
 			
-			var deleteBtn = document.createElement('input');
+			let deleteBtn = document.createElement('input');
 			deleteBtn.value = 'X';
 			deleteBtn.style.backgroundColor = 'crimson';
 			deleteBtn.style.float = 'right';
@@ -1194,14 +1015,14 @@ function updateSavedLists(){
 }
 
 function updateListInfo(){
-	var sugar = 0;
-	var protein = 0;
-	var calories = 0;
-	var carbs = 0;
-	var fat = 0;
-	var price = 0;
+	let sugar = 0;
+	let protein = 0;
+	let calories = 0;
+	let carbs = 0;
+	let fat = 0;
+	let price = 0;
 	sessionData.scheduledIngredients.forEach(function(ing){
-		if (ing.stagedPantryItems)
+		if (ing.stagedPantryItems && ing.stagedPantryItems.length > 0)
 		{
 			ing.stagedPantryItems.forEach(function(item){
 				sugar += parseFloat(item.sugar);
@@ -1215,7 +1036,7 @@ function updateListInfo(){
 	})
 	
 	shoppingListSession.actualItemsOnList.forEach(function(item){
-		if (item != null && item != undefined && !isNaN(parseFloat(item)))
+		if (item != null && item != undefined)
 		{	
 			sugar += parseFloat(item.sugar);
 			protein += parseFloat(item.protein);
@@ -1231,7 +1052,7 @@ function updateListInfo(){
 	document.getElementById('caloriesShoppingTotal').innerHTML = calories;
 	document.getElementById('carbsShoppingTotal').innerHTML = carbs;
 	document.getElementById('fatShoppingTotal').innerHTML = fat;
-	document.getElementById('storeShoppingTotalPrice').innerHTML = price;
+	document.getElementById('storeShoppingTotalPrice').innerHTML = price.toFixed(2);
 	/*
 					<div>
 						<div><label>Sugar: </label><span id="sugarShoppingTotal"></span>g</div>

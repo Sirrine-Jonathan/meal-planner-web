@@ -15,11 +15,11 @@ var localData = {
 	],
 	'pantryItemList':[
 		{"name":"Great Value Thick Sliced Bacon",
-		"correspondingingredient":"Bacon",
+		"correspondingIngredient":"Bacon",
 		"unit":"ounce",
-		"servingsizeunit":"grams",
+		"servingSizeUnit":"grams",
 		"amount":"24",
-		"servingsize":"17",
+		"servingSize":"17",
 		"store":"Walmart",
 		"price":"3.94",
 		"sugar":"0",
@@ -27,13 +27,13 @@ var localData = {
 		"calories":"80",
 		"carbs":"0",
 		"fat":"6",
-		"amountinpantry":1},
+		"amountInPantry":1},
 		{"name":"Great Value American Cheese Singles",
-		"correspondingingredient":"Cheese",
+		"correspondingIngredient":"Cheese",
 		"unit":"slice",
-		"servingsizeunit":"grams",
+		"servingSizeUnit":"grams",
 		"amount":"16",
-		"servingsize":"21",
+		"servingSize":"21",
 		"store":"Walmart",
 		"price":"3.99",
 		"sugar":"1",
@@ -41,7 +41,7 @@ var localData = {
 		"calories":"70",
 		"carbs":"2",
 		"fat":"5",
-		"amountinpantry":1}
+		"amountInPantry":1}
 	],
 	'savedMealPlans': [
 		
