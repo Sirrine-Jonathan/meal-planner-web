@@ -54,9 +54,7 @@ document.addEventListener('DOMContentLoaded', function() {
 						else	
 						leave them at default
 					*/
-					if(Data == null)
-						updateData();
-					else
+					if(Data != null)
 					{
 						if (Data.ingredientList)
 						{
