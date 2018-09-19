@@ -172,41 +172,55 @@ function updatePantry(sortFn = 'az', dataArr = localData.pantryItemList){
 						
 						
 						//find the index of the current pantry item by comparing it to storage
-						let index;
-						localData.pantryItemList.forEach(function(curObj, ind, arr){
-							let testString = JSON.stringify(curObj);
-							if(div.dataset.json == testString)
-								index = ind;
-						});
-						
+                        let index = null;
+                        let set = 'noBarcode';
+                        for (item in localData.pantryItemList.noBarcode){
+                            let testString = JSON.stringify(localData.pantryItemList.noBarcode[item]);
+                            if (div.dataset.json === testString) {
+                                index = item;
+                                break;
+                            }
+                        }
+
+                        if (!index) {
+                            set = 'barcode';
+                            for (item in localData.pantryItemList.barcode) {
+                                let testString = JSON.stringify(localData.pantryItemList.barcode[item]);
+                                if (div.dataset.json === testString) {
+                                    index = item;
+                                    break;
+                                }
+                            }
+                        }
+
 						//change amount in pantry
 						let amountParsed = parseFloat(this.value);
 						if(isNaN(amountParsed))
 							amountParsed = 0;
-						
-						//Change style to reflect state
-						//if in pantry turn border red
-						if(curItem.amountInPantry <= 0)
-						{
-							//change input styles to reflect status
-							this.style.border = "2px solid red";
-						}
-						//if not in pantry set border to default
-						else
-						{
-							//change input styles to reflect status
-							this.style.border = "inherit";
-						}
 
 						if(index >= 0)
 						{
 							div.dataset.json = JSON.stringify(curItem);
-							localData.pantryItemList[index].amountInPantry = amountParsed;
+							localData.pantryItemList[set][index].amountInPantry = amountParsed;
 							updateData();
 							updatePantry();
 							updatePantryTotals();
 						}
-					})
+
+                        //Change style to reflect state
+                        //if in pantry turn border red
+                        if(curItem.amountInPantry <= 0)
+                        {
+                            //change input styles to reflect status
+                            div.style.border = "2px solid red";
+                        }
+                        //if not in pantry set border to default
+                        else
+                        {
+                            //change input styles to reflect status
+                            div.style.border = "inherit";
+                        }
+					});
 					amountDiv.appendChild(amtLabel);
 					amountDiv.appendChild(amountIn);
 				header.appendChild(amountDiv);

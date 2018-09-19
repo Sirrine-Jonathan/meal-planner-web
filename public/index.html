@@ -431,16 +431,41 @@
 				<h2 style="text-align:center">Shopping List Totals</h2>
 				<div id="shoppingListTotals">
 					<div>
-						<div><label>Sugar: </label><span id="sugarShoppingTotal"></span>g</div>
-						<div><label>Protein: </label><span id="proteinShoppingTotal"></span>g</div>
+						<div>
+							<label>Sugar:</label>
+							<span id="sugarShoppingTotal"></span>g
+							<span id="sugarWarning"></span>
+						</div>
+						<div>
+							<label>Protein: </label>
+							<span id="proteinShoppingTotal"></span>g
+							<span id="proteinWarning"></span>
+						</div>
 					</div>
 					<div>
-						<div><label>Calories: </label><span id="caloriesShoppingTotal"></span></div>
-						<div><label>Carbs: </label><span id="carbsShoppingTotal"></span>g</div>
+						<div>
+							<label>Calories: </label>
+							<span id="caloriesShoppingTotal"></span>
+							<span id="caloriesWarning"></span>
+						</div>
+						<div>
+							<label>Carbs: </label>
+							<span id="carbsShoppingTotal"></span>g
+							<span id="carbsWarning"></span>
+						</div>
 					</div>
 					<div>
-						<div><label>Fat: </label><span id="fatShoppingTotal"></span>g</div>
-						<div><label>Total Cost: $</label><span id="storeShoppingTotalPrice"></span><br /></div>
+						<div>
+							<label>Fat: </label>
+							<span id="fatShoppingTotal"></span>g
+							<span id="fatWarning"></span>
+						</div>
+						<div>
+							<label>Total Cost: $</label>
+							<span id="storeShoppingTotalPrice"></span>
+							<span id="priceWarning"></span>
+							<br />
+						</div>
 					</div>
 				</div>
 				<h2 id="listStatus"></h2>
@@ -485,7 +510,7 @@
 							</select>
 							<br />
 							
-							<label>Prefere the </label>
+							<label>Prefer the </label>
 							<select id="lowOrHigh" class="preferencesSelect">
 								<option value="low" selected>Lowest</option>
 								<option value="High">Highest</option>

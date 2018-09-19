@@ -13,15 +13,24 @@ let shoppingListSession = {
 	'actualItemsOnList': [],
 }
 
-let readyList = [];
-let ready = false;
-let notReadyCount = 0;
+let readyList = [];    // list of all items or ingredients that need no further decision
+let ready = false;     // boolean saying if any more decisions need to be made
+let notReadyCount = 0; // if not ready, how many items need to be decided on
+
+/*
+	Items or Ingredients set and ready for the shopping list
+ */
 function ReadyListItem(name, amount, unit)
 {
 	this.name = name;
 	this.amount = amount;
 	this.unit = unit;
 }
+
+/*
+	updates the display telling the user information about
+	the readiness of their shopping list
+ */
 function readyListDisplay()
 {
 	console.log(readyList);
@@ -45,12 +54,13 @@ function readyListDisplay()
 //event listener on the regen button starts off the process
 document.getElementById('regenShoppingList').addEventListener('click', function(){
 	regenShoppingList();
-})
+});
 
 //the main function for getting the shopping list in its initial state
 function regenShoppingList()
 {	
 	readyList = [];
+	shoppingListSession.actualItemsOnList = [];
 	ready = true;
 	notReadyCount = 0;
 	
@@ -67,7 +77,7 @@ function regenShoppingList()
 	
 	eraseShoppingListDiv();    
 	
-	//No scheduled recipes
+	//No scheduled recipes, simplest case
 	if (sessionData.scheduledIngredients.length <= 0)
 	{
 		let mainDiv = document.createElement('div');
@@ -77,7 +87,8 @@ function regenShoppingList()
 		mainDiv.innerHTML = "<h1>There are no scheduled recipes</h1>";
 		document.getElementById('shoppingListTarget').appendChild(mainDiv);
 	}
-	
+
+	//handle each scheduled ingredient
 	sessionData.scheduledIngredients.forEach(function(curIngredient){
 		
 		//set the item that will be placed on list as the current ingredient by default
@@ -92,7 +103,7 @@ function regenShoppingList()
         if((!localData.pantryItemList.noBarcode) || (!localData.pantryItemList.barcode)) {
             if (!localData.pantryItemList.noBarcode) {
                 localData.pantryItemList.noBarcode = {};
-                for (item in localData.pantryItemList) {
+                for (let item in localData.pantryItemList) {
                     if (parseFloat(item) < 1000) {
                         localData.pantryItemList.noBarcode[item] = localData.pantryItemList[item];
                         delete localData.pantryItemList[item];
@@ -102,7 +113,7 @@ function regenShoppingList()
             }
             if (!localData.pantryItemList.barcode) {
                 localData.pantryItemList.barcode = {};
-                for (item in localData.pantryItemList) {
+                for (let item in localData.pantryItemList) {
                     if (parseFloat(item) >= 1000) {
                         localData.pantryItemList.barcode[item] = localData.pantryItemList[item];
                         delete localData.pantryItemList[item];
@@ -114,16 +125,18 @@ function regenShoppingList()
             updateData();
         }
 
+        // recombobulates the two objects (noBarcode & barcode) into
+		// a loopable array
         let list = [];
-        for (it in localData.pantryItemList.noBarcode){
+        for (let it in localData.pantryItemList.noBarcode){
             list.push(localData.pantryItemList.noBarcode[it]);
         }
-        for (it in localData.pantryItemList.barcode){
+        for (let it in localData.pantryItemList.barcode){
             list.push(localData.pantryItemList.barcode[it])
         }
 
-
-		for (i in list){
+        // finds relevant pantry items in and out of stock
+		for (let i in list){
 			let curPantryItem = list[i];
             if (item.name == curPantryItem.correspondingIngredient)
             {
@@ -153,8 +166,13 @@ function regenShoppingList()
 			item.need = currentNeed;
 			
 			//if the need has been fulfilled for this ingredient with the stock, then do nothing more
-			if (item.need <= 0)
-				return;
+			if (item.need <= 0){
+
+				//this resets the need to the original amounts based on recipes
+                item.need = item.amount;
+
+                return;
+            }
 		}
 		else 
 		{
@@ -185,6 +203,10 @@ function regenShoppingList()
 			let onlyIng = createIngPlaceholder(item);
 		    mainDiv.appendChild(onlyIng);
 			document.getElementById('shoppingListTarget').appendChild(mainDiv);
+
+			//this resets the need to the original amounts based on recipes
+            item.need = item.amount;
+
 			return;
 		}
 		
@@ -218,6 +240,10 @@ function regenShoppingList()
 				
 				mainDiv.appendChild(listItem);
 				document.getElementById('shoppingListTarget').appendChild(mainDiv);
+
+                //this resets the need to the original amounts based on recipes
+                item.need = item.amount;
+
 				return;
 			}
 			else
@@ -230,6 +256,10 @@ function regenShoppingList()
 				
 				mainDiv.appendChild(onlyIng);
 				document.getElementById('shoppingListTarget').appendChild(mainDiv);
+
+                //this resets the need to the original amounts based on recipes
+                item.need = item.amount;
+
 				return;
 			}
 		}
@@ -263,7 +293,10 @@ function regenShoppingList()
 				mainDiv.appendChild(processBtn);
 				
 				document.getElementById('shoppingListTarget').appendChild(mainDiv);
-				
+
+                //this resets the need to the original amounts based on recipes
+                item.need = item.amount;
+
 				return;
 			}
 			else
@@ -275,10 +308,14 @@ function regenShoppingList()
 				let onlyIng = createIngPlaceholder(item);
 				mainDiv.appendChild(onlyIng);
 				document.getElementById('shoppingListTarget').appendChild(mainDiv);
+
+                //this resets the need to the original amounts based on recipes
+                item.need = item.amount;
+
 				return;
 			}
 		}		
-	})
+	});
 	updateListInfo();
 	readyListDisplay();
 }
@@ -292,7 +329,7 @@ function findBestItem(relevantPantryItems)
 		low = false;
 	
 	let prop = shoppingListSession.preferences.property;
-	let bestItem = findLowOrHighProperty(relevantPantryItems, prop, low)
+	let bestItem = findLowOrHighProperty(relevantPantryItems, prop, low);
 
 	return bestItem;
 }
@@ -383,7 +420,7 @@ function createIngBlock(item, chooseItemFlag, customStockFlag, relevantPantryIte
 				option.innerHTML = "none";
 				stockItemsSelect.appendChild(option);
 				
-				for(let i = 0; i < pantryItem.amountInPantry; i++)
+				for (let i = 0; i < pantryItem.amountInPantry; i++)
 				{
 					let option = document.createElement('option');
 					option.setAttribute("value", pantryItem.name);
@@ -403,7 +440,7 @@ function createIngBlock(item, chooseItemFlag, customStockFlag, relevantPantryIte
 			
 			let children = this.children;
 			
-			for (option in children){
+			for (let option in children){
 				if (children[option].dataset && children[option].selected && children[option].value != "none")
 				{
 					let pantryItem = JSON.parse(children[option].dataset.pantryItem);
@@ -414,7 +451,7 @@ function createIngBlock(item, chooseItemFlag, customStockFlag, relevantPantryIte
 				}
 				if (children[option].value == "none" && children[option].selected)
 				{
-					for (option2 in children)
+					for (let option2 in children)
 					{
 						if (children[option2].checked)
 							children[option2].checked = false;
@@ -474,7 +511,7 @@ function createIngBlock(item, chooseItemFlag, customStockFlag, relevantPantryIte
 				
 				//check the item quantity of the item being removed
 				let stagedItems = stagedItemsDiv.children;
-				for (it in stagedItems)
+				for (let it in stagedItems)
 				{
 					try {
 						if (stagedItems[it].dataset.pantryItem == JSON.stringify(pantryItemJSON))
@@ -546,7 +583,7 @@ function createIngBlock(item, chooseItemFlag, customStockFlag, relevantPantryIte
 			addItemButton.addEventListener("click", function(event){
 				
 				let children = chooseItemSelect.children;
-				for (option in children)
+				for (let option in children)
 				{
 					if (children[option].selected)
 					{
@@ -567,7 +604,7 @@ function createIngBlock(item, chooseItemFlag, customStockFlag, relevantPantryIte
 						//find out if item is already in the staged list
 						let alreadyInList = false;
 						let stagedItems = stagedItemsDiv.children;
-						for (it in stagedItems)
+						for (let it in stagedItems)
 						{
 							try {
 								if (stagedItems[it].dataset.pantryItem == JSON.stringify(pantryItem))
@@ -628,7 +665,7 @@ function createIngBlock(item, chooseItemFlag, customStockFlag, relevantPantryIte
 								
 								//check the item quantity of the item being removed
 								let stagedItems = stagedItemsDiv.children;
-								for (it in stagedItems)
+								for (let it in stagedItems)
 								{
 									try {
 										if (stagedItems[it].dataset.pantryItem == pantryItemString)
@@ -886,7 +923,7 @@ function tryConvertingUnits(pantryItem, ingredient)
 {
 	let itemAmountNeeded = 1;
 
-	let ingredientAmountNeeded = parseFloat(ingredient.amount);
+	let ingredientAmountNeeded = parseFloat(ingredient.need);
 	let quantityInOneItemUsingItemUnit = parseFloat(pantryItem.amount);
 
 	//reconcile unit discrepancy
@@ -1021,31 +1058,74 @@ function updateListInfo(){
 	let carbs = 0;
 	let fat = 0;
 	let price = 0;
+
+	//warning htmls
+	let sugarWarn = document.getElementById('sugarWarning');
+    let proteinWarn = document.getElementById('proteinWarning');
+    let caloriesWarn = document.getElementById('caloriesWarning');
+    let carbsWarn = document.getElementById('carbsWarning');
+    let fatWarn = document.getElementById('fatWarning');
+    let priceWarn = document.getElementById('priceWarning');
+    clearWarnings();
+    function clearWarnings() {
+        sugarWarn.style.display = 'none';
+        proteinWarn.style.display = 'none';
+        caloriesWarn.style.display = 'none';
+        carbsWarn.style.display = 'none';
+        fatWarn.style.display = 'none';
+        priceWarn.style.display = 'none';
+    }
+    function warn(html){
+    	html.style.display = "block";
+    	html.style.innerHTML = "  *missing information, not accurate";
+	}
+
+
 	sessionData.scheduledIngredients.forEach(function(ing){
 		if (ing.stagedPantryItems && ing.stagedPantryItems.length > 0)
 		{
 			ing.stagedPantryItems.forEach(function(item){
-				sugar += parseFloat(item.sugar);
-				protein += parseFloat(item.protein);
-				calories += parseFloat(item.calories);
-				carbs += parseFloat(item.carbs);
-				fat += parseFloat(item.fat);
-				price += parseFloat(item.price);
+                if (item != null && item != undefined)
+                {
+                    getItemValues(item);
+                }
 			})
 		}
-	})
+	});
 	
 	shoppingListSession.actualItemsOnList.forEach(function(item){
 		if (item != null && item != undefined)
 		{	
-			sugar += parseFloat(item.sugar);
-			protein += parseFloat(item.protein);
-			calories += parseFloat(item.calories);
-			carbs += parseFloat(item.carbs);
-			fat += parseFloat(item.fat);
-			price += parseFloat(item.price);	
+			getItemValues(item);
 		}
-	})
+	});
+
+	function getItemValues(item) {
+        if (item.sugar)
+            sugar += parseFloat(item.sugar);
+    	else
+    		warn(sugarWarn);
+    	if (item.protein)
+			protein += parseFloat(item.protein);
+        else
+            warn(proteinWarn);
+    	if (item.calories)
+        	calories += parseFloat(item.calories);
+        else
+        	warn(caloriesWarn);
+        if (item.carbs)
+    		carbs += parseFloat(item.carbs);
+        else
+        	warn(carbsWarn);
+        if (item.fat)
+        	fat += parseFloat(item.fat);
+        else
+        	warn(fatWarn);
+        if (item.price)
+        	price += parseFloat(item.price);
+        else
+        	warn(priceWarn);
+    }
 	
 	document.getElementById('sugarShoppingTotal').innerHTML = sugar; 
 	document.getElementById('proteinShoppingTotal').innerHTML = protein;
@@ -1054,17 +1134,44 @@ function updateListInfo(){
 	document.getElementById('fatShoppingTotal').innerHTML = fat;
 	document.getElementById('storeShoppingTotalPrice').innerHTML = price.toFixed(2);
 	/*
-					<div>
-						<div><label>Sugar: </label><span id="sugarShoppingTotal"></span>g</div>
-						<div><label>Protein: </label><span id="proteinShoppingTotal"></span>g</div>
-					</div>
-					<div>
-						<div><label>Calories: </label><span id="caloriesShoppingTotal"></span></div>
-						<div><label>Carbs: </label><span id="carbsShoppingTotal"></span>g</div>
-					</div>
-					<div>
-						<div><label>Fat: </label><span id="fatShoppingTotal"></span>g</div>
-						<div><label>Total Cost: $</label><span id="storeShoppingTotalPrice"></span><br /></div>
-					</div>
+		<div id="shoppingListTotals">
+			<div>
+				<div>
+					<label>Sugar:</label>
+					<span id="sugarShoppingTotal"></span>g
+					<span id="sugarWarning"></span>
+				</div>
+				<div>
+					<label>Protein: </label>
+					<span id="proteinShoppingTotal"></span>g
+					<span id="proteinWarning"></span>
+				</div>
+			</div>
+			<div>
+				<div>
+					<label>Calories: </label>
+					<span id="caloriesShoppingTotal"></span>
+					<span id="caloriesWarning"></span>
+				</div>
+				<div>
+					<label>Carbs: </label>
+					<span id="carbsShoppingTotal"></span>g
+					<span id="carbsWarning"></span>
+				</div>
+			</div>
+			<div>
+				<div>
+					<label>Fat: </label>
+					<span id="fatShoppingTotal"></span>g
+					<span id="fatWarning"></span>
+				</div>
+				<div>
+					<label>Total Cost: $</label>
+					<span id="storeShoppingTotalPrice"></span>
+					<span id="priceWarning"></span>
+					<br />
+				</div>
+			</div>
+		</div>
 	*/
 }

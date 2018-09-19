@@ -3,7 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="668d86c2-678c-4877-80d9-7ea38f4c2763" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/scripts/data.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/scripts/data.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/index.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/public/scripts/pantry.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/scripts/pantry.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/public/scripts/shoppingList.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/scripts/shoppingList.js" afterDir="false" />
     </list>
@@ -22,8 +22,8 @@
       <file leaf-file-name="index.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/public/index.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="13260">
-              <caret line="780" column="54" selection-start-line="780" selection-start-column="54" selection-end-line="780" selection-end-column="54" />
+            <state relative-caret-position="197">
+              <caret line="436" column="52" lean-forward="true" selection-start-line="436" selection-start-column="52" selection-end-line="436" selection-end-column="52" />
             </state>
           </provider>
         </entry>
@@ -31,8 +31,8 @@
       <file leaf-file-name="pantry.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/public/scripts/pantry.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="160">
-              <caret line="46" column="37" selection-start-line="46" selection-start-column="13" selection-end-line="46" selection-end-column="37" />
+            <state relative-caret-position="-774">
+              <caret line="170" column="53" selection-start-line="170" selection-start-column="53" selection-end-line="170" selection-end-column="53" />
             </state>
           </provider>
         </entry>
@@ -40,8 +40,8 @@
       <file leaf-file-name="data.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/public/scripts/data.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-170">
-              <caret line="25" column="22" lean-forward="true" selection-start-line="25" selection-start-column="22" selection-end-line="25" selection-end-column="22" />
+            <state relative-caret-position="17">
+              <caret line="25" column="22" selection-start-line="25" selection-start-column="22" selection-end-line="25" selection-end-column="22" />
             </state>
           </provider>
         </entry>
@@ -49,8 +49,20 @@
       <file leaf-file-name="shoppingList.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/public/scripts/shoppingList.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="425">
-              <caret line="1054" column="83" selection-start-line="1054" selection-start-column="83" selection-end-line="1054" selection-end-column="83" />
+            <state relative-caret-position="-1481">
+              <caret line="173" column="23" selection-start-line="173" selection-start-column="23" selection-end-line="173" selection-end-column="23" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="sort.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/public/scripts/sort.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="157">
+              <caret line="78" column="54" selection-start-line="78" selection-start-column="54" selection-end-line="78" selection-end-column="54" />
+              <folding>
+                <element signature="n#!!doc" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -77,6 +89,14 @@
       <find>localData.pantryItemList</find>
       <find>correspondingingredient</find>
       <find>price</find>
+      <find>sugarWarni</find>
+      <find>findBestItem</find>
+      <find>findLowOrHighProperty</find>
+      <find>tryConv</find>
+      <find>tryConvertingUnits</find>
+      <find>for (</find>
+      <find>for(</find>
+      <find>return</find>
     </findStrings>
     <replaceStrings>
       <replace>let</replace>
@@ -88,8 +108,9 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/public/scripts/pantry.js" />
         <option value="$PROJECT_DIR$/public/scripts/data.js" />
+        <option value="$PROJECT_DIR$/public/index.html" />
+        <option value="$PROJECT_DIR$/public/scripts/pantry.js" />
         <option value="$PROJECT_DIR$/public/scripts/shoppingList.js" />
       </list>
     </option>
@@ -104,8 +125,8 @@
     <packageJsonPaths />
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="30" />
-    <option name="y" value="-8" />
+    <option name="x" value="-156" />
+    <option name="y" value="-22" />
     <option name="width" value="1124" />
     <option name="height" value="536" />
   </component>
@@ -180,12 +201,13 @@
       <workItem from="1536950384423" duration="1991000" />
       <workItem from="1537000825635" duration="8351000" />
       <workItem from="1537249574659" duration="1161000" />
-      <workItem from="1537298816914" duration="3798000" />
+      <workItem from="1537298816914" duration="4038000" />
+      <workItem from="1537305937981" duration="7040000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="23165000" />
+    <option name="totallyTimeSpent" value="30445000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
@@ -199,7 +221,7 @@
       <window_info anchor="bottom" id="Version Control" order="7" />
       <window_info anchor="bottom" id="Run" order="2" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
-      <window_info anchor="bottom" id="Terminal" order="7" visible="true" weight="0.04631218" />
+      <window_info anchor="bottom" id="Terminal" order="7" visible="true" weight="0.063464835" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
@@ -216,7 +238,40 @@
   <component name="VcsContentAnnotationSettings">
     <option name="myLimit" value="2678400000" />
   </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <option name="time" value="1" />
+    </breakpoint-manager>
+  </component>
   <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/public/index.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="13260">
+          <caret line="780" column="54" selection-start-line="780" selection-start-column="54" selection-end-line="780" selection-end-column="54" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/scripts/pantry.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="782">
+          <caret line="46" column="37" selection-start-line="46" selection-start-column="13" selection-end-line="46" selection-end-column="37" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/scripts/data.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="425">
+          <caret line="25" column="22" lean-forward="true" selection-start-line="25" selection-start-column="22" selection-end-line="25" selection-end-column="22" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/scripts/shoppingList.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="17918">
+          <caret line="1054" column="83" selection-start-line="1054" selection-start-column="83" selection-end-line="1054" selection-end-column="83" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/public/index.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="13260">
@@ -301,29 +356,39 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/public/index.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="13260">
-          <caret line="780" column="54" selection-start-line="780" selection-start-column="54" selection-end-line="780" selection-end-column="54" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public/scripts/pantry.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="160">
-          <caret line="46" column="37" selection-start-line="46" selection-start-column="13" selection-end-line="46" selection-end-column="37" />
+        <state relative-caret-position="197">
+          <caret line="436" column="52" lean-forward="true" selection-start-line="436" selection-start-column="52" selection-end-line="436" selection-end-column="52" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/public/scripts/data.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-170">
-          <caret line="25" column="22" lean-forward="true" selection-start-line="25" selection-start-column="22" selection-end-line="25" selection-end-column="22" />
+        <state relative-caret-position="17">
+          <caret line="25" column="22" selection-start-line="25" selection-start-column="22" selection-end-line="25" selection-end-column="22" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/scripts/pantry.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-774">
+          <caret line="170" column="53" selection-start-line="170" selection-start-column="53" selection-end-line="170" selection-end-column="53" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/scripts/sort.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="157">
+          <caret line="78" column="54" selection-start-line="78" selection-start-column="54" selection-end-line="78" selection-end-column="54" />
+          <folding>
+            <element signature="n#!!doc" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/public/scripts/shoppingList.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="425">
-          <caret line="1054" column="83" selection-start-line="1054" selection-start-column="83" selection-end-line="1054" selection-end-column="83" />
+        <state relative-caret-position="-1481">
+          <caret line="173" column="23" selection-start-line="173" selection-start-column="23" selection-end-line="173" selection-end-column="23" />
         </state>
       </provider>
     </entry>
