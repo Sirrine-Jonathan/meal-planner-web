@@ -635,9 +635,16 @@ function updatePantryTotals(){
     let propsArr = ['sugar', 'protein', 'calories', 'carbs', 'fat', 'price'];
 	
 	//loops through each pantry item
-	let pantryList = localData.pantryItemList;
-	for (item in pantryList){
-		let curItem = pantryList[item];
+	let pantryArr = [];
+    for (item in localData.pantryItemList.noBarcode) {
+        pantryArr.push(localData.pantryItemList.noBarcode[item]);
+    }
+    for (item in localData.pantryItemList.barcode) {
+        pantryArr.push(localData.pantryItemList.barcode[item])
+    }
+
+	for (item in pantryArr){
+		let curItem = pantryArr[item];
 		for (let i = 0; i < 6; i++){
 			if (!isNaN(parseInt(curItem.amountInPantry)) && !isNaN(parseFloat(curItem[propsArr[i]])))
 			{
@@ -647,8 +654,6 @@ function updatePantryTotals(){
 			}
 		}
 	}
-		
-		//handle store info
 		
 	//update HTML
 	document.getElementById('sugarTotal').innerHTML = totalsArr[0];
