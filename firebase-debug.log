@@ -1,0 +1,41 @@
+[debug] [2018-09-28T23:08:06.351Z] ----------------------------------------------------------------------
+[debug] [2018-09-28T23:08:06.351Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\jonsi\AppData\Roaming\npm\node_modules\firebase-tools\bin\firebase serve
+[debug] [2018-09-28T23:08:06.351Z] CLI Version:   3.17.4
+[debug] [2018-09-28T23:08:06.351Z] Platform:      win32
+[debug] [2018-09-28T23:08:06.351Z] Node Version:  v8.11.2
+[debug] [2018-09-28T23:08:06.367Z] Time:          Fri Sep 28 2018 16:08:06 GMT-0700 (Pacific Daylight Time)
+[debug] [2018-09-28T23:08:06.367Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2018-09-28T23:08:06.451Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2018-09-28T23:08:06.451Z] > authorizing via signed-in user
+[debug] [2018-09-28T23:08:06.451Z] > refreshing access token with scopes: ["email","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","openid"]
+[debug] [2018-09-28T23:08:06.451Z] >>> HTTP REQUEST POST https://www.googleapis.com/oauth2/v3/token  
+ { refresh_token: '1/kFuFZTmqvI2eXCSwGIB_EPe1EW_t_cEJ4wTlMsx53Vq3DVzu7fhpxT3s2nr6f3qc',
+  client_id: '563584335869-fgrhgmd47bqnekij5i8b5pr03ho849e6.apps.googleusercontent.com',
+  client_secret: 'j9iVZfS8kkCEFUPaAeJV0sAi',
+  grant_type: 'refresh_token',
+  scope: 'email https://www.googleapis.com/auth/cloud-platform https://www.googleapis.com/auth/cloudplatformprojects.readonly https://www.googleapis.com/auth/firebase openid' } 
+ Fri Sep 28 2018 16:08:06 GMT-0700 (Pacific Daylight Time)
+[debug] [2018-09-28T23:08:06.736Z] <<< HTTP RESPONSE 200
+[debug] [2018-09-28T23:08:06.798Z] >>> HTTP REQUEST GET https://admin.firebase.com/v1/projects/meal-planner-8738e  
+  
+ Fri Sep 28 2018 16:08:06 GMT-0700 (Pacific Daylight Time)
+[debug] [2018-09-28T23:08:07.314Z] <<< HTTP RESPONSE 200
+[debug] [2018-09-28T23:08:07.314Z] >>> HTTP REQUEST GET https://admin.firebase.com/v1/database/meal-planner-8738e/tokens  
+  
+ Fri Sep 28 2018 16:08:07 GMT-0700 (Pacific Daylight Time)
+[debug] [2018-09-28T23:08:07.873Z] <<< HTTP RESPONSE 200
+[info] 
+[info] === Serving from 'C:\Users\jonsi\Desktop\MEAL PLANNER ON FIREBASE'...
+[info] 
+[debug] [2018-09-28T23:08:07.882Z] >>> HTTP REQUEST GET https://cloudresourcemanager.googleapis.com/v1/projects/meal-planner-8738e  
+  
+ Fri Sep 28 2018 16:08:07 GMT-0700 (Pacific Daylight Time)
+[debug] [2018-09-28T23:08:08.260Z] <<< HTTP RESPONSE 200
+[debug] [2018-09-28T23:08:08.261Z] >>> HTTP REQUEST GET https://mobilesdk-pa.googleapis.com/v1/projects/611111003951/clients/_:getWebAppConfig  
+  
+ Fri Sep 28 2018 16:08:08 GMT-0700 (Pacific Daylight Time)
+[debug] [2018-09-28T23:08:08.688Z] <<< HTTP RESPONSE 200
+[info] i  hosting: Serving hosting files from: public
+[info] +  hosting: Local server: http://localhost:5000
+

@@ -61,7 +61,8 @@ document.getElementById('submitNewPantryItem').addEventListener('click', functio
 		updatePantryTotals();
 		updatePantry();
 		document.getElementById('pantryItemMsg').innerHTML = "Pantry Item Submitted to Pantry";
-		clearPantryItemForm()
+		clearPantryItemForm();
+		console.log(localData);
 	}
 	else{
 		document.getElementById('pantryItemMsg').innerHTML = "Missing Items";
@@ -96,7 +97,7 @@ function clearPantryItemForm(){
 	document.getElementById('fat').value = '';
 }
 
-function updatePantry(sortFn = 'az', dataArr = localData.pantryItemList){
+function updatePantry(sortFn = 'az', dataArr){
 	
 	//wipe select clean`
 	let node = document.getElementById('pantryItems');
@@ -135,12 +136,16 @@ function updatePantry(sortFn = 'az', dataArr = localData.pantryItemList){
 	//sort array
 	//sort the objects in the array by name alphabetically
 	let pantryArr = [];
-	for (item in localData.pantryItemList.noBarcode){
-		pantryArr.push(localData.pantryItemList.noBarcode[item]);
+	if (!dataArr) {
+        for (item in localData.pantryItemList.noBarcode) {
+            pantryArr.push(localData.pantryItemList.noBarcode[item]);
+        }
+        for (item in localData.pantryItemList.barcode) {
+            pantryArr.push(localData.pantryItemList.barcode[item])
+        }
+    } else {
+		pantryArr = dataArr;
 	}
-	for (item in localData.pantryItemList.barcode){
-	    pantryArr.push(localData.pantryItemList.barcode[item])
-    }
 
 	if (pantryArr && sortFn == 'az')
 		pantryArr.sort(compareAlpha);
@@ -323,9 +328,17 @@ function activeSearch(searchCriteria){
 	let searchCriteriaArr = searchCriteria.trim().split('').map(function (ch, i, array) { return ch == ' ' ? array[i - 1] + ' ' : ch });
 	let numOfLetters = searchCriteriaArr.length;
 	let results = [];
-	
-	//data loop
-	localData.pantryItemList.forEach(function(pantryObj, ind, arr){
+
+	// reformat data INEFFICIENT
+    let pantryArr = [];
+    for (item in localData.pantryItemList.noBarcode){
+        pantryArr.push(localData.pantryItemList.noBarcode[item]);
+    }
+    for (item in localData.pantryItemList.barcode){
+        pantryArr.push(localData.pantryItemList.barcode[item])
+    }
+
+	pantryArr.forEach(function(pantryObj, ind, arr){
 		let testPass = true;
 		let testString = pantryObj.name; 	 
 		let testArr = testString.trim().split('').map(function (ch, i, array) { return ch == ' ' ? array[i - 1] + ' ' : ch });
@@ -336,7 +349,9 @@ function activeSearch(searchCriteria){
 		}
 		if(testPass)
 			results.push(pantryObj);
-	})
+	});
+
+
 	
 	updatePantry('az', results);
 }

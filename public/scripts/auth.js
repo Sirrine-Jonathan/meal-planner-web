@@ -44,7 +44,7 @@ document.addEventListener('DOMContentLoaded', function() {
 				userData.once('value', function(snapshot) {
 					var Data = snapshot.val();
 					console.log(Data);
-					
+
 					/*
 						if there are ingredientsList set the localData ingredient array to those ingredients
 						if there are recipes set the localData recipes to those recipes
@@ -54,7 +54,7 @@ document.addEventListener('DOMContentLoaded', function() {
 						else	
 						leave them at default
 					*/
-					if(Data != null)
+					if (Data != null)
 					{
 						if (Data.ingredientList)
 						{
@@ -76,6 +76,8 @@ document.addEventListener('DOMContentLoaded', function() {
 							localData.pantryItemList = Data.pantryItemList;
 						}
 						
+					} else {
+                        firebase.auth().signOut();
 					}
 
 					

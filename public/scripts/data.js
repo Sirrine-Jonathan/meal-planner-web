@@ -4,68 +4,31 @@
 *
 *
 */
-var localData = {
+let localData = {
 	'ingredientList': [
-		{name: "Bacon", unit: "slice"},
-		{name: "Butter", unit: "tablespoon"},
-		{name: "Egg", unit: "-none-"},
-		{name: "Cheese", unit: "slice"}
+
 	],
 	'recipes': [
+
 	],
-	'pantryItemList':[
-		{"name":"Great Value Thick Sliced Bacon",
-		"correspondingIngredient":"Bacon",
-		"unit":"ounce",
-		"servingSizeUnit":"grams",
-		"amount":"24",
-		"servingSize":"17",
-		"store":"Walmart",
-		"price":"3.94",
-		"sugar":"0",
-		"protein":"6",
-		"calories":"80",
-		"carbs":"0",
-		"fat":"6",
-		"amountInPantry":1},
-		{"name":"Great Value American Cheese Singles",
-		"correspondingIngredient":"Cheese",
-		"unit":"slice",
-		"servingSizeUnit":"grams",
-		"amount":"16",
-		"servingSize":"21",
-		"store":"Walmart",
-		"price":"3.99",
-		"sugar":"1",
-		"protein":"3",
-		"calories":"70",
-		"carbs":"2",
-		"fat":"5",
-		"amountInPantry":1}
-	],
+	'pantryItemList': {
+        "barcode": {},
+        "noBarcode": {}
+    },
 	'savedMealPlans': [
 		
 	],
 	'savedShoppingLists':[
-		{
-			"name":"Bacon & Eggs All Week","shoppingList":[],
-			"scheduledIngredients":[
-				{"name":"Bacon","amount":21,"unit":"slice", "stagedpantryItems":[] },
-				{"name":"Egg","amount":28,"unit":"-none-", "stagedpantryitems":[] },
-				{"name":"Cheese","amount":14,"unit":"slice", "stagedpantryitems":[] },
-				{"name":"Butter","amount":7,"unit":"tablespoon", "stagedpantryitems":[] }
-				],
-			"mobile": []
-		}	
+		
 	]
-}
-var sessionData = {
+};
+let sessionData = {
 	'scheduledRecipes': [],
 	'scheduledIngredients': [],
 	'shoppingList':[]
-}
+};
 
-var sortSettings = {
+let sortSettings = {
 	'community': {
 		'category':'All',
 		'sortBy':'az',
@@ -76,9 +39,23 @@ var sortSettings = {
 	}
 }
 
-function updateData(callback){
-	var userData = firebase.database().ref('users/' + user.uid);
-	userData.update(localData);
+function updateData(callback, extension){
+	let userData;
+	let dataToUpdate;
+	if (extension) {
+        userData = firebase.database().ref('users/' + user.uid + "/" + extension);
+        dataToUpdate = localData[extension];
+    } else {
+        userData = firebase.database().ref('users/' + user.uid);
+        dataToUpdate = localData;
+    }
+	userData.update(dataToUpdate).then((result) => {
+		userData.once("value").then((snapshot) => {
+			console.log(snapshot.val());
+		})
+	}, (err) => {
+		throw new Error("failed to save");
+	});
 	
 	if(callback)
 	{
@@ -91,7 +68,7 @@ window.onbeforeunload = updateData();
 window.onunload = updateData();
 */
 
-var unitsArr = [
+let unitsArr = [
 	"cup",
 	"fluid ounce",
 	"pint",
@@ -102,7 +79,7 @@ var unitsArr = [
 	"slice",
 	"grams"
 ];
-var selectsArr = document.getElementsByClassName('unitsSelect');
+let selectsArr = document.getElementsByClassName('unitsSelect');
 function setupUnitSelects(unitsArr, selectsArr, justOne = false){
 	
 	if (!unitsArr)
@@ -139,17 +116,17 @@ function setupUnitSelects(unitsArr, selectsArr, justOne = false){
 	if(justOne)
 	{
 		unitsArr.forEach(function(unit){
-			var op = document.createElement('option');
+			let op = document.createElement('option');
 			op.value = unit;
 			op.innerHTML = unit;
 			selectsArr.appendChild(op);
 		})
 	}
 	else{
-		for ( var i = 0; i < selectsArr.length; i++ )
+		for ( let i = 0; i < selectsArr.length; i++ )
 		{
 			unitsArr.forEach(function(unit){
-				var op = document.createElement('option');
+				let op = document.createElement('option');
 				op.value = unit;
 				op.innerHTML = unit;
 				selectsArr[i].appendChild(op);
@@ -177,7 +154,7 @@ function updateObjInArr(arr, obj)
 }
 
 function decodeHtml(html) {
-	var txt = document.createElement("textarea");
+	let txt = document.createElement("textarea");
 	txt.innerHTML = html;
 	return txt.value;
 }
