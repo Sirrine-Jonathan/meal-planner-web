@@ -99,45 +99,24 @@ function regenShoppingList()
 		let relevantPantryItemsInStock = [];
 		let relevantPantryItemsOutOfStock = [];
 
-        // temp rewrite code
-        if((!localData.pantryItemList.noBarcode) || (!localData.pantryItemList.barcode)) {
-            if (!localData.pantryItemList.noBarcode) {
-                localData.pantryItemList.noBarcode = {};
-                for (let item in localData.pantryItemList) {
-                    if (parseFloat(item) < 1000) {
-                        localData.pantryItemList.noBarcode[item] = localData.pantryItemList[item];
-                        delete localData.pantryItemList[item];
-                    }
-                }
+        // change array data to obj
+        if(localData.pantryItemList.length !== undefined) {
 
-            }
-            if (!localData.pantryItemList.barcode) {
-                localData.pantryItemList.barcode = {};
-                for (let item in localData.pantryItemList) {
-                    if (parseFloat(item) >= 1000) {
-                        localData.pantryItemList.barcode[item] = localData.pantryItemList[item];
-                        delete localData.pantryItemList[item];
-                    }
-                }
-            }
+            // transfer array data to obj
+            let data = localData.pantryItemList;
+            localData.pantryItemList = {};
+            data.forEach((each, ind, arr) => {
+                localData.pantryItemList[ind] = each;
+            });
 
             //save database
             updateData();
         }
 
-        // recombobulates the two objects (noBarcode & barcode) into
-		// a loopable array
-        let list = [];
-        for (let it in localData.pantryItemList.noBarcode){
-            list.push(localData.pantryItemList.noBarcode[it]);
-        }
-        for (let it in localData.pantryItemList.barcode){
-            list.push(localData.pantryItemList.barcode[it])
-        }
 
         // finds relevant pantry items in and out of stock
-		for (let i in list){
-			let curPantryItem = list[i];
+		for (let i in localData.pantryItemList){
+			let curPantryItem = localData.pantryItemList[i];
             if (item.name == curPantryItem.correspondingIngredient)
             {
                 relevantPantryItems.push(curPantryItem);

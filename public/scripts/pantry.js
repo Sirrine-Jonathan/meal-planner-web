@@ -44,15 +44,12 @@ document.getElementById('submitNewPantryItem').addEventListener('click', functio
 	
 	if(validatePantryItem(pantryItem))
 	{
-	    if (!localData.pantryItemList.noBarcode){
-	        localData.pantryItemList.noBarcode = [];
-        }
         let length = 0;
-	    let list = localData.pantryItemList.noBarcode;
+	    let list = localData.pantryItemList;
 	    for (i in list){
 	    	length++;
 		}
-		localData.pantryItemList.noBarcode[length] = pantryItem;
+		localData.pantryItemList[length] = pantryItem;
 	
 		//save database
 		updateData();
@@ -106,28 +103,15 @@ function updatePantry(sortFn = 'az', dataArr){
 		node.removeChild(node.firstChild);
 	}
 
-	// temp rewrite code
-    if((!localData.pantryItemList.noBarcode) || (!localData.pantryItemList.barcode)) {
-        if (!localData.pantryItemList.noBarcode) {
-            localData.pantryItemList.noBarcode = {};
-            for (item in localData.pantryItemList) {
-                if (parseFloat(item) < 1000) {
-                    localData.pantryItemList.noBarcode[item] = localData.pantryItemList[item];
-                    delete localData.pantryItemList[item];
-                }
-            }
+	// change array data to obj
+    if(localData.pantryItemList.length != undefined) {
 
-        }
-        if (!localData.pantryItemList.barcode) {
-            localData.pantryItemList.barcode = {};
-            for (item in localData.pantryItemList) {
-                if (parseFloat(item) >= 1000) {
-                    localData.pantryItemList.barcode[item] = localData.pantryItemList[item];
-                    delete localData.pantryItemList[item];
-                }
-            }
-        }
-        console.log(localData.pantryItemList);
+        // transfer array data to obj
+        let data = localData.pantryItemList;
+        localData.pantryItemList = {};
+        data.forEach((each, ind, arr) => {
+            localData.pantryItemList[ind] = each;
+        });
 
         //save database
         updateData();
@@ -137,11 +121,8 @@ function updatePantry(sortFn = 'az', dataArr){
 	//sort the objects in the array by name alphabetically
 	let pantryArr = [];
 	if (!dataArr) {
-        for (item in localData.pantryItemList.noBarcode) {
-            pantryArr.push(localData.pantryItemList.noBarcode[item]);
-        }
-        for (item in localData.pantryItemList.barcode) {
-            pantryArr.push(localData.pantryItemList.barcode[item])
+        for (item in localData.pantryItemList) {
+            pantryArr.push(localData.pantryItemList[item]);
         }
     } else {
 		pantryArr = dataArr;
@@ -178,25 +159,14 @@ function updatePantry(sortFn = 'az', dataArr){
 						
 						//find the index of the current pantry item by comparing it to storage
                         let index = null;
-                        let set = 'noBarcode';
-                        for (item in localData.pantryItemList.noBarcode){
-                            let testString = JSON.stringify(localData.pantryItemList.noBarcode[item]);
+                        for (item in localData.pantryItemList){
+                            let testString = JSON.stringify(localData.pantryItemList[item]);
                             if (div.dataset.json === testString) {
                                 index = item;
                                 break;
                             }
                         }
 
-                        if (!index) {
-                            set = 'barcode';
-                            for (item in localData.pantryItemList.barcode) {
-                                let testString = JSON.stringify(localData.pantryItemList.barcode[item]);
-                                if (div.dataset.json === testString) {
-                                    index = item;
-                                    break;
-                                }
-                            }
-                        }
 
 						//change amount in pantry
 						let amountParsed = parseFloat(this.value);
@@ -331,11 +301,8 @@ function activeSearch(searchCriteria){
 
 	// reformat data INEFFICIENT
     let pantryArr = [];
-    for (item in localData.pantryItemList.noBarcode){
-        pantryArr.push(localData.pantryItemList.noBarcode[item]);
-    }
-    for (item in localData.pantryItemList.barcode){
-        pantryArr.push(localData.pantryItemList.barcode[item])
+    for (item in localData.pantryItemList){
+        pantryArr.push(localData.pantryItemList[item]);
     }
 
 	pantryArr.forEach(function(pantryObj, ind, arr){
@@ -407,29 +374,16 @@ function deletePantryItem(){
 
     //update localData
     let index = null;
-    let set = 'noBarcode';
-    for (item in localData.pantryItemList.noBarcode){
-        let testString = JSON.stringify(localData.pantryItemList.noBarcode[item]);
+    for (item in localData.pantryItemList){
+        let testString = JSON.stringify(localData.pantryItemList[item]);
         if (itemDiv.dataset.json === testString) {
             index = item;
             break;
         }
     }
 
-    if (!index) {
-        set = 'barcode';
-        for (item in localData.pantryItemList.barcode) {
-            let testString = JSON.stringify(localData.pantryItemList.barcode[item]);
-            if (itemDiv.dataset.json === testString) {
-                index = item;
-                break;
-            }
-        }
-    }
-
-
 	if(index) {
-     	delete localData.pantryItemList[set][index];
+     	delete localData.pantryItemList[index];
     }
 	updateData(updatePantry);
 }
@@ -566,30 +520,19 @@ function editPantryItem(){
 		
 		//update localData 
 		let index;
-		let set = 'noBarcode';
-        for (item in localData.pantryItemList.noBarcode){
-        	let testString = JSON.stringify(localData.pantryItemList.noBarcode[item]);
+        for (item in localData.pantryItemList){
+        	let testString = JSON.stringify(localData.pantryItemList[item]);
         	if (itemDiv.dataset.json === testString) {
                 index = item;
                 break;
             }
         }
 
-        if (!index) {
-        	set = 'barcode';
-            for (item in localData.pantryItemList.barcode) {
-                let testString = JSON.stringify(localData.pantryItemList.barcode[item]);
-                if (itemDiv.dataset.json === testString) {
-                    index = item;
-                    break;
-                }
-            }
-        }
 
 		if(index)
 		{
 			itemDiv.dataset.json = JSON.stringify(tempObj);
-			localData.pantryItemList[set][index] = tempObj;
+			localData.pantryItemList[index] = tempObj;
 			updateData();
 			updatePantry();
 			console.log(localData.pantryItemList);
@@ -636,12 +579,10 @@ function updatePantryTotals(){
 	
 	//loops through each pantry item
 	let pantryArr = [];
-    for (item in localData.pantryItemList.noBarcode) {
-        pantryArr.push(localData.pantryItemList.noBarcode[item]);
+    for (item in localData.pantryItemList) {
+        pantryArr.push(localData.pantryItemList[item]);
     }
-    for (item in localData.pantryItemList.barcode) {
-        pantryArr.push(localData.pantryItemList.barcode[item])
-    }
+
 
 	for (item in pantryArr){
 		let curItem = pantryArr[item];

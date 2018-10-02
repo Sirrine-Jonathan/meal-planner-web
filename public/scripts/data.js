@@ -12,8 +12,7 @@ let localData = {
 
 	],
 	'pantryItemList': {
-        "barcode": {},
-        "noBarcode": {}
+
     },
 	'savedMealPlans': [
 		
