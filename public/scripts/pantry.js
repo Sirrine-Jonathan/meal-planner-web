@@ -103,6 +103,20 @@ function updatePantry(sortFn = 'az', dataArr){
 		node.removeChild(node.firstChild);
 	}
 
+	// code to fix data
+	/*
+	function adjustData(){
+	let data = localData.pantryItemList.barcode;
+	for (item in data){
+		localData.pantryItemList[item] = data[item];
+    }
+	console.log(localData.pantryItemList);
+	delete localData.pantryItemList.barcode;
+	delete localData.pantryItemList.noBarcode;
+}
+
+	 */
+
 	// change array data to obj
     if(localData.pantryItemList.length != undefined) {
 

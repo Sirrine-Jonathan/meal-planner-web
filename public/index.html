@@ -1,85 +1,34 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>Meal Planner</title>
+    <link rel="manifest" href="manifest.json">
+    <script src="https://www.gstatic.com/firebasejs/5.0/firebase.js"></script>
 
-	<script src="https://www.gstatic.com/firebasejs/4.7.0/firebase.js"></script>
-	<script src="https://www.gstatic.com/firebasejs/3.7.1/firebase-app.js"></script>
+    <!--
+    <script src="https://www.gstatic.com/firebasejs/3.7.1/firebase-app.js"></script>
 	<script src="https://www.gstatic.com/firebasejs/3.7.1/firebase-auth.js"></script>
 	<script src="https://www.gstatic.com/firebasejs/3.7.1/firebase-database.js"></script>
-	
+	-->
+
 	<!--AUTH SCRIPT LINKs -->
-	<script src="https://www.gstatic.com/firebasejs/4.8.1/firebase.js"></script>
-	<script src="https://cdn.firebase.com/libs/firebaseui/2.5.1/firebaseui.js"></script>
-	<link rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/2.5.1/firebaseui.css" />
+    <script src="https://cdn.firebase.com/libs/firebaseui/3.4.1/firebaseui.js"></script>
+    <link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/3.4.1/firebaseui.css" />
 
 	    <!-- update the version number as needed -->
+    <!--
     <script defer src="/__/firebase/4.7.0/firebase-app.js"></script>
     <script defer src="/__/firebase/4.7.0/firebase-auth.js"></script>
     <script defer src="/__/firebase/4.7.0/firebase-database.js"></script>
+    -->
 
-    <!-- initialize the SDK after all desired features are loaded -->
+    <!-- initialize the SDK after all desired features are loaded
     <script defer src="/__/firebase/init.js"></script>
-	
-	<!--LOCALIZED WIDGET
-	<script src="https://www.gstatic.com/firebasejs/ui/2.5.1/firebase-ui-auth__en.js"></script>
-	<link type="text/css" rel="stylesheet" href="https://www.gstatic.com/firebasejs/ui/2.5.1/firebase-ui-auth.css" />
-	-->
+    -->
 
-	<script>
-	  // Initialize Firebase
-		var config = {
-			apiKey: "AIzaSyDAWZu7_18A8Qi4J9bEskl5K-A9hh0JzmQ",
-			authDomain: "meal-planner-8738e.firebaseapp.com",
-			databaseURL: "https://meal-planner-8738e.firebaseio.com",
-			projectId: "meal-planner-8738e",
-			storageBucket: "meal-planner-8738e.appspot.com",
-			messagingSenderId: "611111003951",
-			clientId: "611111003951-68po95dbaqeqk8a1k0qm6ea05k9nkba9.apps.googleusercontent.com",
-			scopes: [
-				"email",
-				"profile",
-				"https://www.googleapis.com/auth/calendar"
-			],
-			discoveryDocs: [
-				"https://www.googleapis.com/discover/v1/apis/calendar/v3/rest"
-			]
-		};
-		firebase.initializeApp(config);
-		database = firebase.database();
 
-    	var uiConfig = {
-      		signInSuccessUrl: 'http://localhost:5000/',
-   
-	        signInOptions: [
-				{
-					provider: firebase.auth.GoogleAuthProvider.PROVIDER_ID,
-					scopes: config.scopes,
-					authMethod: 'https://accounts.google.com',
-					clientId: '611111003951-68po95dbaqeqk8a1k0qm6ea05k9nkba9.apps.googleusercontent.com'
-				},
-				{
-					provider: firebase.auth.EmailAuthProvider.PROVIDER_ID,
-					requireDisplayName: true
-				}
-	        ],
-	        //credentialHelper: firebaseui.auth.CredentialHelper.NONE,
-	        tosUrl: 'http://sirrineprogramming.com/privacypolicies/morseCoder.htm'
-      	}
-
-		// Initialize the FirebaseUI Widget using Firebase.
-		var ui = new firebaseui.auth.AuthUI(firebase.auth());
-		ui.disableAutoSignIn();
-		ui.start('#firebaseui-auth-container', uiConfig);
-		window.signInWithRedirect = firebase.auth().signInWithRedirect;
-		
-    </script>
-	
-
-	
-	<!--VIEW PORT & CHAR SET-->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
 	
 	<!--META TAGS-->
 	<meta name="twitter:card" content="A place to plan your meals" />
@@ -87,11 +36,11 @@
 	<meta name="twitter:creator" content="@Enirrisky" />
 	<meta name="description" content="Meal Planner helps you digitally store your recipes, pantry items, 
 			meal plans, and shopping lists. The tools here help you write 
-			accurate shopping lists and understand the price and nutruition 
+			accurate shopping lists and understand the price and nutrition
 			info of your meal plans. ">
 	<meta property="og:description" content="Meal Planner helps you digitally store your recipes, pantry items, 
 			meal plans, and shopping lists. The tools here help you write 
-			accurate shopping lists and understand the price and nutruition 
+			accurate shopping lists and understand the price and nutrition
 			info of your meal plans.">
 	<meta property="og:title" content="Meal Planner" />
 	<meta property="og:type" content="website" />
@@ -129,12 +78,15 @@
 			<p style="font-size:1.3em">
 				Meal Planner helps you digitally store your recipes, pantry items, 
 				meal plans, and shopping lists. The tools here help you write 
-				accurate shopping lists and understand the price and nutruition 
+				accurate shopping lists and understand the price and nutrition
 				info of your meal plans. 
 			</p>
 
-			<!--Log in Operations--> 
-			<div id="firebaseui-auth-container"></div>
+			<!--Log in Operations-->
+            <div id="firebaseui-spa">
+			    <div id="firebaseui-auth-container"></div>
+                <div id="loader">Loading...</div>
+            </div>
 		</div>
 	</div>
 	
@@ -269,7 +221,6 @@
 	</div>
 </div>
 
-
 <!-- Recipes
  -
  -
@@ -341,7 +292,7 @@
 			<span tabindex="0" class="closeModal" id="closeRecipeModal">&times;</span>
 			
 			<form id="newRecipeForm">
-				<input id="recipeName" type="text" placeholder="Recipe Name" style="width:60%"></input><br />
+				<input id="recipeName" type="text" placeholder="Recipe Name" style="width:60%"/><br />
 				<select id="category" multiple size="4" style="font-size:1em; width:60%">
 					<option disabled>Categories</option>
 					<option value="Breakfast">Breakfast</option>
@@ -578,22 +529,22 @@
 							document.getElementById("enablePantryItemsAutoLabel").classList.add('greyedOut');
 						}
 						checkAutomaticPantryRadioButton();
-					})
+					});
 					
 					document.querySelector("input[id=enablePantryItemsAuto]").addEventListener('change', function(){
 						checkAutomaticPantryRadioButton();
-					})
+					});
 					document.querySelector("input[id=enablePantryItemsChoose]").addEventListener('change', function(){
 						checkAutomaticPantryRadioButton();
-					})
+					});
 					
 					function checkAutomaticPantryRadioButton(){
-						var btn = document.querySelector("input[id=enablePantryItemsAuto]");
-						var btns = document.querySelector("input[name=pantryItemEnable]");
+						let btn = document.querySelector("input[id=enablePantryItemsAuto]");
+						let btns = document.querySelector("input[name=pantryItemEnable]");
 						
 						if (btn.checked && !btns.disabled)
 						{
-							var children = document.getElementById('autogenPantryItemPreferences').children;
+							let children = document.getElementById('autogenPantryItemPreferences').children;
 							for (ele in children)
 							{
 								if(children[ele].nodeName && children[ele].nodeName.toLowerCase() == "input")
@@ -609,10 +560,10 @@
 						
 						else if(!btn.checked || btns.disabled)
 						{
-							var children = document.getElementById('autogenPantryItemPreferences').children;
-							for (ele in children)
+							let children = document.getElementById('autogenPantryItemPreferences').children;
+							for (let ele in children)
 							{
-								if(children[ele].nodeName && children[ele].nodeName.toLowerCase() == "input")
+								if(children[ele].nodeName && children[ele].nodeName.toLowerCase() === "input")
 								{
 									children[ele].disabled = true;
 								}
@@ -773,30 +724,31 @@
 
 	<script>
 		// Attempting a workaround for broken google sign in button
-
-		var uiContainer = document.getElementById('firebaseui-auth-container');
-		setTimeout(function(){
-			console.log(uiContainer.children.length);
-			console.log(uiContainer.getElementsByClassName('firebaseui-idp-google'));
-			var old_element = uiContainer.getElementsByClassName('firebaseui-idp-google')[0];
-			var new_element = old_element.cloneNode(true);
+		let uiContainer = document.getElementById('firebaseui-auth-container');
+		let old_element = uiContainer.getElementsByClassName('firebaseui-idp-google')[0];
+		let new_element;
+		if (old_element){
+			let new_element = old_element.cloneNode(true);
 			old_element.parentNode.replaceChild(new_element, old_element);
 			new_element.addEventListener('click', function(){
-				var provider = new firebase.auth.GoogleAuthProvider();
+				let provider = new firebase.auth.GoogleAuthProvider();
 				provider.addScope('profile');
 				provider.addScope('email');
 				provider.addScope('https://www.googleapis.com/auth/calendar');
 				firebase.auth().signInWithPopup(provider).then(function(result){
-					var token = result.credential.accessToken;
-					var user = result.user;
+					let token = result.credential.accessToken;
+					let user = result.user;
 				})
 			})
-		}, 1000);
-	</script>
-</divi>
+		}
 
+	</script>
+</div>
+<script type="text/javascript" src="scripts/firebaseui_setup.js"></script>
 <script type="text/javascript" src="scripts/auth.js"></script>
 <script type="text/javascript" src="scripts/data.js"></script>
+<script type="text/javascript" src="scripts/community.js"></script>
+<script type="text/javascript" src="scripts/pantry.js"></script>
 <script type="text/javascript" src="scripts/sort.js"></script>
 <script type="text/javascript" src="scripts/ingredientBank.js"></script>
 <script type="text/javascript" src="scripts/communityIngredientBank.js"></script>
@@ -806,8 +758,4 @@
 <script type="text/javascript" src="scripts/showButtons.js"></script>
 <script type="text/javascript" src="scripts/adjustUnits.js"></script>
 <script type="text/javascript" src="scripts/shoppingList.js"></script>
-<script type="text/javascript" src="scripts/pantry.js"></script>
-<script type="text/javascript" src="scripts/community.js"></script>
-
 </body>
-</html>

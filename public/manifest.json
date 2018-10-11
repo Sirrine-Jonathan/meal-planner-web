@@ -1,0 +1,13 @@
+{
+  "name": "Meal Planner",
+  "short_name": "MealPlanner",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#fff",
+  "lang": "en-US",
+  "description": "Meal Planner Web Application.",
+  "prefer_related_applications": false,
+  "theme_color": "#fff",
+  "scope": "/",
+  "orientation": "portrait-primary"
+}
