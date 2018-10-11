@@ -20,11 +20,13 @@ let config = {
 firebase.initializeApp(config);
 database = firebase.database();
 
+
+// Initialize Firebase Auth UI
 let uiConfig = {
     callbacks: {
         signInSuccessWithAuthResult: function(authResult, redirectUrl){
             if (authResult.user){
-                handleSignedInUser(authResult.user);
+                //handleSignedInUser(authResult.user);
             }
             if (authResult.additionalUserInfo){
                 console.log((authResult.additionalUserInfo.isNewUser) ?
@@ -60,29 +62,123 @@ let ui = new firebaseui.auth.AuthUI(firebase.auth());
 ui.disableAutoSignIn();
 ui.start('#firebaseui-auth-container', uiConfig);
 
-/**
- * @return {string} The URL of the FirebaseUI standalone widget.
- */
 function getWidgetUrl() {
     return '/widget#recaptcha=' + getRecaptchaMode();
 }
 
-
-/**
- * Redirects to the FirebaseUI widget.
- */
 let signInWithRedirect = function() {
     window.location.assign(getWidgetUrl());
 };
 
-
-/**
- * Open a popup with the FirebaseUI widget.
- */
 let signInWithPopup = function() {
     window.open(getWidgetUrl(), 'Sign In', 'width=985,height=735');
 };
 
 let handleSignedInUser = function(user) {
-    console.log(user);
+    if (user) {
+
+
+        //remove hide from home page & nav
+        document.getElementById('home').classList.remove('hidden');
+        document.getElementById('nav').classList.remove('hidden');
+
+        //add hide to intro page
+        document.getElementById('introduction').classList.add('hidden');
+
+        //update welcome
+        document.getElementById('welcome').innerHTML = "Welcome, " + user.displayName;
+
+        window.user = user;
+
+        let userData = firebase.database().ref('users/' + user.uid);
+        userData.once('value', function(snapshot) {
+            let Data = snapshot.val();
+
+            if (Data != null)
+            {
+                if (Data.ingredientList)
+                {
+                    localData.ingredientList = Data.ingredientList;
+                }
+
+                if (Data.recipes)
+                {
+                    localData.recipes = Data.recipes;
+                }
+
+                if (Data.savedShoppingLists)
+                {
+                    localData.savedShoppingLists = Data.savedShoppingLists;
+                }
+
+                if (Data.pantryItemList)
+                {
+                    localData.pantryItemList = Data.pantryItemList;
+                }
+
+            } else {
+                updateData();
+                //firebase.auth().signOut();
+            }
+
+
+        }).then(function(){
+            updateCommunityRecipes();
+            let selectsArr = document.getElementsByClassName('unitsSelect');
+            setupUnitSelects(unitsArr, selectsArr);
+            //run main found at bottom of script
+
+            //calls setup with appropriate parameters
+            ingredientBankMain();
+            communityIngredientBankMain();
+
+            updateBank(document.getElementById('ingredientBank'), localData.ingredientList);
+            updateCommunityBank(document.getElementById('communityIngredientBank'), localData.ingredientList);
+        })
+    }
+    else {
+        document.getElementById('introduction').classList.remove('hidden');
+        document.getElementById('nav').classList.add('hidden');
+        document.getElementById('home').classList.add('hidden');
+    }
 };
+
+let logOutUser = function(){
+    firebase.auth().signOut();
+    document.getElementById('introduction').classList.remove('hidden');
+    document.getElementById('nav').classList.add('hidden');
+    document.getElementById('home').classList.add('hidden');
+    ui.start('#firebaseui-auth-container', uiConfig);
+};
+
+let deleteUser = function(user){
+    firebase.removeUser({
+        email : user.email,
+        password : user.password
+    }, function(error) {
+        if (error === null) {
+            console.log("User remove successfully");
+        } else {
+            console.log("Error removing user: ", error);
+        }
+    });
+};
+
+
+document.addEventListener('DOMContentLoaded', function() {
+    const logoutBtn = document.getElementById('logoutBtn');
+    logoutBtn.addEventListener('click', logOutUser);
+
+/*
+    const deleteAccountBtn = document.getElementById('deleteAccountBtn');
+    deleteAccountBtn.addEventListener('click', function(user){
+        deleteUser(user);
+    });
+*/
+
+    firebase.auth().onAuthStateChanged(function(user) {
+        handleSignedInUser(user)
+    });
+
+    //window.signInWithRedirect = firebase.auth().signInWithRedirect;
+});

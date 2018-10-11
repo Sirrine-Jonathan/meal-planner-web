@@ -110,8 +110,6 @@ document.addEventListener('DOMContentLoaded', function() {
 	});
 
 	window.signInWithRedirect = firebase.auth().signInWithRedirect;
-
-	
 });
 
 
